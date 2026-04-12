@@ -1,132 +1,292 @@
-"""RAGSynthesizer — ChromaDB'den şablon bul, LLM ile sentezle."""
+"""RAG Synthesizer Agent — combines existing templates to create new apps."""
 
 from __future__ import annotations
 
 import json
-import re
+import logging
+import shutil
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, List
+from typing import Optional
 
-import httpx
-
-from .models import SynthesizeRequest, WorkspaceItem
-
-if TYPE_CHECKING:
-    from .workspace_manager import WorkspaceManager
+logger = logging.getLogger(__name__)
 
 
-class RAGSynthesizer:
-    def __init__(self, manager: "WorkspaceManager"):
-        self.manager = manager
-        self.workspace_root = Path("workspace/generated_apps")
-        self.ollama_url = "http://localhost:11434/api/generate"
+class RAGSynthesizerAgent:
+    """Synthesizes new applications by combining existing cloned templates."""
 
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
-    async def synthesize(self, req: SynthesizeRequest) -> WorkspaceItem:
-        import gc
-        import uuid
+    def __init__(self) -> None:
+        self.workspace_dir = Path(__file__).parent.parent.parent.parent / "workspace"
+        self.cloned_dir = self.workspace_dir / "cloned_templates"
+        self.synthesized_dir = self.workspace_dir / "synthesized_apps"
+        self.synthesized_dir.mkdir(parents=True, exist_ok=True)
 
-        # 1. Semantic arama — ilgili şablonları bul
-        if req.source_templates:
-            templates = [
-                {
-                    "metadata": {
-                        "name": t,
-                        "file_path": f"workspace/cloned_templates/{t}",
-                    }
-                }
-                for t in req.source_templates
-            ]
-        else:
-            templates = await self.manager.search_templates(req.user_command, top_k=3)
+    async def synthesize(
+        self,
+        user_command: str,
+        target_project: str,
+        source_projects: list[str] = [],
+    ) -> dict:
+        """Synthesize a new app from existing templates."""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        project_dir = self.synthesized_dir / f"{target_project}_{timestamp}"
+        project_dir.mkdir(parents=True, exist_ok=True)
 
-        # 2. Şablon içeriklerini yükle (memory-safe)
-        context_parts: list[str] = []
-        for t in templates:
-            meta = t.get("metadata", {})
-            name = meta.get("name", "unknown")
-            file_path = meta.get("file_path", "")
-            html_file = Path(file_path) / "index.html"
-            meta_file = Path(file_path) / "metadata.json"
+        logger.info("Synthesizing: %s from %d sources", target_project, len(source_projects))
 
-            content = ""
-            if html_file.exists():
-                content = html_file.read_text(encoding="utf-8")
-                content = content[:6000]  # RAM koruma
+        # Find relevant templates
+        relevant_templates = await self._find_relevant_templates(user_command, source_projects)
 
-            meta_info = {}
-            if meta_file.exists():
-                meta_info = json.loads(meta_file.read_text(encoding="utf-8"))
+        # Analyze and extract components
+        components_map = {}
+        for template in relevant_templates:
+            components = await self._analyze_template(template)
+            components_map[template["name"]] = components
 
-            context_parts.append(
-                f"=== ŞABLON: {name} ===\n"
-                f"Açıklama: {meta_info.get('summary', '')}\n"
-                f"Bileşenler: {', '.join(meta_info.get('components', []))}\n"
-                f"Kod (kısaltılmış):\n{content}\n"
-            )
-
-        context = "\n\n".join(context_parts)
-
-        # 3. LLM ile sentezle
-        prompt = (
-            f"Sen kıdemli bir frontend geliştiricisisin.\n"
-            f'Kullanıcı komutu: "{req.user_command}"\n'
-            f"Hedef proje adı: {req.target_project}\n\n"
-            f"Mevcut şablonlardan ilham alarak yeni bir web projesi oluştur:\n\n"
-            f"{context}\n\n"
-            f"Kurallar:\n"
-            f"- Şablonları birebir kopyalama, sadece ilham al\n"
-            f"- Yeni, özgün ve çalışan bir uygulama üret\n"
-            f"- Tek HTML dosyası (CSS ve JS dahil)\n"
-            f"- Modern, profesyonel tasarım\n"
-            f"- Sadece kodu döndür\n\n"
-            f"Hedef: {req.user_command}"
+        # Generate synthesis plan
+        synthesis_plan = await self._generate_synthesis_plan(
+            user_command, target_project, components_map
         )
 
-        async with httpx.AsyncClient(timeout=180) as client:
+        # Execute synthesis
+        files_created = await self._execute_synthesis(synthesis_plan, project_dir)
+
+        # Create metadata
+        metadata = {
+            "id": f"synth_{timestamp}",
+            "type": "synthesized",
+            "name": target_project,
+            "description": user_command,
+            "components": synthesis_plan.get("components", []),
+            "tech_stack": synthesis_plan.get("tech_stack", "html-css-js"),
+            "path": str(project_dir),
+            "source_templates": [t["name"] for t in relevant_templates],
+            "synthesis_plan": synthesis_plan,
+            "files_created": files_created,
+            "metadata": {
+                "user_command": user_command,
+                "templates_used": len(relevant_templates),
+            },
+            "created_at": datetime.now().isoformat(),
+            "embeddings_stored": False,
+        }
+
+        # Save metadata
+        metadata_path = project_dir / "metadata.json"
+        metadata_path.write_text(
+            json.dumps(metadata, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+        logger.info("✅ Synthesized %d files for: %s", len(files_created), target_project)
+        return metadata
+
+    async def _find_relevant_templates(
+        self,
+        query: str,
+        source_projects: list[str],
+    ) -> list[dict]:
+        """Find relevant templates from workspace."""
+        templates = []
+
+        # Search cloned templates
+        if self.cloned_dir.exists():
+            for template_dir in self.cloned_dir.iterdir():
+                if not template_dir.is_dir():
+                    continue
+
+                metadata_file = template_dir / "metadata.json"
+                if metadata_file.exists():
+                    try:
+                        metadata = json.loads(metadata_file.read_text(encoding="utf-8"))
+                        # Simple keyword matching
+                        score = self._calculate_relevance(query, metadata)
+                        metadata["relevance_score"] = score
+                        templates.append(metadata)
+                    except Exception as e:
+                        logger.warning("Failed to load metadata: %s", e)
+
+        # Sort by relevance
+        templates.sort(key=lambda t: t.get("relevance_score", 0), reverse=True)
+
+        # Return top 5
+        return templates[:5]
+
+    async def _analyze_template(self, template_metadata: dict) -> dict:
+        """Analyze a template and extract reusable components."""
+        template_path = Path(template_metadata["path"])
+        components = {}
+
+        # Analyze HTML files
+        for html_file in template_path.glob("*.html"):
+            html_content = html_file.read_text(encoding="utf-8")
+            components["html"] = self._extract_html_components(html_content)
+
+        # Analyze CSS files
+        for css_file in template_path.glob("**/*.css"):
+            css_content = css_file.read_text(encoding="utf-8")
+            components["css"] = self._extract_css_components(css_content)
+
+        # Analyze JS files
+        for js_file in template_path.glob("**/*.js"):
+            js_content = js_file.read_text(encoding="utf-8")
+            components["js"] = self._extract_js_modules(js_content)
+
+        return components
+
+    async def _generate_synthesis_plan(
+        self,
+        user_command: str,
+        target_project: str,
+        components_map: dict,
+    ) -> dict:
+        """Generate a plan for synthesizing the new app."""
+        import httpx
+
+        prompt = f"""You are an expert software architect. Create a synthesis plan for combining existing templates into a new app.
+
+USER COMMAND: {user_command}
+TARGET PROJECT: {target_project}
+
+AVAILABLE COMPONENTS:
+{json.dumps(components_map, indent=2)}
+
+Create a JSON plan with:
+- architecture: brief description
+- components: list of UI components to include
+- tech_stack: technologies to use
+- file_structure: dict of file_path -> source_template
+- styling_notes: how to unify styles
+- integration_notes: how to integrate components"""
+
+        async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.post(
-                self.ollama_url,
+                "http://localhost:11434/api/generate",
                 json={
                     "model": "qwen2.5:14b",
                     "prompt": prompt,
                     "stream": False,
-                    "options": {"num_ctx": 32768, "temperature": 0.4},
-                },
+                    "format": "json",
+                }
             )
-            generated = resp.json().get("response", "")
+            resp.raise_for_status()
+            result = resp.json()
 
-        # Kodu temizle
-        code_match = re.search(r"```(?:html)?\n?(.*?)```", generated, re.DOTALL)
-        if code_match:
-            generated = code_match.group(1)
+        try:
+            return json.loads(result["response"])
+        except:
+            return {
+                "architecture": "Simple web app",
+                "components": ["navbar", "hero", "footer"],
+                "tech_stack": "html-css-js",
+                "file_structure": {},
+            }
 
-        # Kaydet
-        target_dir = self.workspace_root / req.target_project
-        target_dir.mkdir(parents=True, exist_ok=True)
-        (target_dir / "index.html").write_text(generated, encoding="utf-8")
+    async def _execute_synthesis(
+        self,
+        plan: dict,
+        output_dir: Path,
+    ) -> list[str]:
+        """Execute the synthesis plan and create files."""
+        files_created = []
 
-        log = {
-            "command": req.user_command,
-            "target": req.target_project,
-            "sources": [t.get("metadata", {}).get("name") for t in templates],
-            "synthesized_at": datetime.now().isoformat(),
-        }
-        (target_dir / "synthesis_log.json").write_text(
-            json.dumps(log, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
-        gc.collect()
+        # Copy and merge files from source templates
+        for file_path, source_template in plan.get("file_structure", {}).items():
+            # Find source file
+            source_file = self._find_source_file(source_template, file_path)
+            if source_file and source_file.exists():
+                dest_file = output_dir / file_path
+                dest_file.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source_file, dest_file)
+                files_created.append(file_path)
 
-        item_id = str(uuid.uuid4())
-        item = WorkspaceItem(
-            id=item_id,
-            name=req.target_project,
-            type="synthesized",
-            created_at=datetime.now(),
-            description=req.user_command,
-            file_path=str(target_dir),
-        )
-        await self.manager._save_item(item)
-        return item
+        # Create main index.html if not exists
+        if not (output_dir / "index.html").exists():
+            index_content = await self._generate_index_html(plan)
+            (output_dir / "index.html").write_text(index_content, encoding="utf-8")
+            files_created.append("index.html")
+
+        return files_created
+
+    def _calculate_relevance(self, query: str, metadata: dict) -> float:
+        """Calculate relevance score for a template."""
+        score = 0.0
+        query_lower = query.lower()
+
+        # Match against name
+        if metadata.get("name", "").lower() in query_lower:
+            score += 3.0
+
+        # Match against description
+        if metadata.get("description", "").lower() in query_lower:
+            score += 2.0
+
+        # Match against components
+        for component in metadata.get("components", []):
+            if component.lower() in query_lower:
+                score += 1.5
+
+        return score
+
+    def _extract_html_components(self, html: str) -> dict:
+        """Extract components from HTML."""
+        import re
+        components = {}
+
+        # Extract sections with IDs or classes
+        sections = re.findall(r'<(section|div|header|footer|nav)[^>]*class="([^"]*)"[^>]*>', html)
+        for tag, classes in sections:
+            components[f"{tag}.{classes}"] = "found"
+
+        return components
+
+    def _extract_css_components(self, css: str) -> dict:
+        """Extract CSS components."""
+        import re
+        components = {}
+
+        # Extract class selectors
+        classes = re.findall(r'\.([a-zA-Z0-9_-]+)\s*{', css)
+        for cls in classes:
+            components[cls] = "found"
+
+        return components
+
+    def _extract_js_modules(self, js: str) -> dict:
+        """Extract JS modules."""
+        import re
+        components = {}
+
+        # Extract function names
+        funcs = re.findall(r'function\s+(\w+)', js)
+        for func in funcs:
+            components[func] = "function"
+
+        return components
+
+    def _find_source_file(self, template_name: str, file_path: str) -> Optional[Path]:
+        """Find a source file from a template."""
+        # Search in cloned templates
+        if self.cloned_dir.exists():
+            for template_dir in self.cloned_dir.iterdir():
+                if template_name in template_dir.name:
+                    return template_dir / file_path
+        return None
+
+    async def _generate_index_html(self, plan: dict) -> str:
+        """Generate a main index.html file."""
+        return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{plan.get('architecture', 'Synthesized App')}</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Synthesized from multiple templates -->
+    <main id="app"></main>
+    <script src="js/app.js"></script>
+</body>
+</html>
+"""

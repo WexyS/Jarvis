@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Code, Search, Monitor, Mic } from 'lucide-react';
+import { Send, Code, Search, Monitor } from 'lucide-react';
+import VoiceControl from './VoiceControl';
 
 type Mode = 'chat' | 'code' | 'research' | 'rpa';
 
@@ -19,6 +20,8 @@ const MODES: { key: Mode; label: string; icon: React.ReactNode; color: string }[
 export default function InputBox({ onSend, disabled, isConnected }: InputBoxProps) {
   const [input, setInput] = useState('');
   const [mode, setMode] = useState<Mode>('chat');
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-resize textarea
@@ -47,6 +50,25 @@ export default function InputBox({ onSend, disabled, isConnected }: InputBoxProp
     }
   };
 
+  const handleVoiceInput = (text: string) => {
+    setInput((prev) => prev + (prev ? ' ' : '') + text);
+    setIsListening(false);
+  };
+
+  const handleTTS = (text: string) => {
+    if (!text) {
+      setIsSpeaking(false);
+    } else {
+      setIsSpeaking(true);
+      // Speak the text
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'tr-TR';
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
   return (
     <div className="border-t border-jarvis-border bg-jarvis-panel p-4">
       {/* Mode selector */}
@@ -66,16 +88,17 @@ export default function InputBox({ onSend, disabled, isConnected }: InputBoxProp
             {m.label}
           </button>
         ))}
-        
-        {/* Voice button placeholder */}
-        <button
-          disabled
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-jarvis-bg border border-jarvis-border text-jarvis-textMuted/50 cursor-not-allowed ml-auto"
-          title="Voice input coming soon"
-        >
-          <Mic className="w-4 h-4" />
-          Voice
-        </button>
+
+        {/* Voice Control */}
+        <div className="ml-auto">
+          <VoiceControl
+            onVoiceInput={handleVoiceInput}
+            onTTS={handleTTS}
+            isListening={isListening}
+            isSpeaking={isSpeaking}
+            disabled={!isConnected || disabled}
+          />
+        </div>
       </div>
 
       {/* Input form */}

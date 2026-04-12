@@ -1,5 +1,5 @@
-import { useRef, useEffect } from 'react';
-import { User, Bot } from 'lucide-react';
+import { useRef, useEffect, useState } from 'react';
+import { User, Bot, Volume2, VolumeX } from 'lucide-react';
 import StreamingMessage from './StreamingMessage';
 import type { ChatMessage } from '../hooks/useJarvis';
 
@@ -12,11 +12,59 @@ interface ChatAreaProps {
 export default function ChatArea({ messages, currentResponse, isStreaming }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [speakingId, setSpeakingId] = useState<number | null>(null);
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, currentResponse]);
+
+  // Cleanup audio on unmount
+  useEffect(() => {
+    return () => {
+      audioElement?.pause();
+    };
+  }, [audioElement]);
+
+  const speakMessage = async (text: string, idx: number) => {
+    // Stop current speech
+    if (audioElement) {
+      audioElement.pause();
+      setAudioElement(null);
+      setSpeakingId(null);
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:8000/api/v2/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text.substring(0, 2000), language: 'en' }),
+      });
+
+      if (!res.ok) throw new Error('TTS failed');
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.onended = () => {
+        setSpeakingId(null);
+        setAudioElement(null);
+      };
+      audio.onerror = () => {
+        setSpeakingId(null);
+        setAudioElement(null);
+      };
+      setAudioElement(audio);
+      setSpeakingId(idx);
+      await audio.play();
+    } catch (err) {
+      console.error('TTS error:', err);
+      setSpeakingId(null);
+      setAudioElement(null);
+    }
+  };
 
   return (
     <div 
@@ -77,8 +125,21 @@ export default function ChatArea({ messages, currentResponse, isStreaming }: Cha
                     <p className="whitespace-pre-wrap">{msg.content}</p>
                   </div>
                 ) : (
-                  <div className="text-left">
-                    <StreamingMessage content={msg.content} />
+                  <div className="text-left flex items-start gap-2">
+                    <div className="flex-1">
+                      <StreamingMessage content={msg.content} />
+                    </div>
+                    <button
+                      onClick={() => speakMessage(msg.content, idx)}
+                      className={`flex-shrink-0 p-1.5 rounded-md transition-colors mt-1 ${
+                        speakingId === idx
+                          ? 'bg-jarvis-primary/20 text-jarvis-primary'
+                          : 'text-jarvis-textMuted hover:text-jarvis-primary hover:bg-jarvis-card'
+                      }`}
+                      title={speakingId === idx ? 'Stop speaking' : 'Speak this message'}
+                    >
+                      {speakingId === idx ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                    </button>
                   </div>
                 )}
               </div>

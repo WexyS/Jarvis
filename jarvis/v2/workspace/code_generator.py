@@ -1,98 +1,203 @@
-"""CodeGenerator — Fikir veya şablondan uygulama üretir (Ollama/qwen2.5:14b)."""
+"""Code Generator Agent — generates complete apps from ideas using LLM."""
 
 from __future__ import annotations
 
 import json
-import re
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-import httpx
+from jarvis.v2.core.llm_router import LLMRouter
+
+logger = logging.getLogger(__name__)
 
 
-class CodeGenerator:
-    def __init__(self, workspace_root: str = "workspace/generated_apps"):
-        self.workspace_root = Path(workspace_root)
-        self.workspace_root.mkdir(parents=True, exist_ok=True)
-        self.ollama_url = "http://localhost:11434/api/generate"
+class CodeGeneratorAgent:
+    """Generates complete applications from natural language ideas."""
 
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
+    def __init__(self) -> None:
+        self.workspace_dir = Path(__file__).parent.parent.parent.parent / "workspace" / "generated_apps"
+        self.workspace_dir.mkdir(parents=True, exist_ok=True)
+        self.llm_router = None  # Will use HTTP directly
+
     async def generate(
         self,
         idea: str,
-        project_name: Optional[str] = None,
         tech_stack: str = "html-css-js",
-        template_context: Optional[str] = None,
+        name: Optional[str] = None,
     ) -> dict:
-        """Fikir metninden uygulama üretir."""
-        if not project_name:
-            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-            project_name = f"project_{ts}"
+        """Generate a complete app from an idea."""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        app_name = name or self._sanitize_name(idea)
+        project_dir = self.workspace_dir / f"{app_name}_{timestamp}"
+        project_dir.mkdir(parents=True, exist_ok=True)
 
-        target_dir = self.workspace_root / project_name
-        target_dir.mkdir(parents=True, exist_ok=True)
+        logger.info("Generating app: %s", app_name)
 
-        # Prompt oluştur
-        template_section = ""
-        if template_context:
-            tc = template_context[:8000]  # RAM koruma
-            template_section = (
-                f"\n\nReferans şablon (bu koddan ilham al, kopyalama):\n"
-                f"```html\n{tc}\n```"
-            )
+        # Generate app structure
+        structure = await self._generate_structure(idea, tech_stack)
 
-        prompt = (
-            f"Sen kıdemli bir {tech_stack} geliştiricisisin.\n"
-            f"Aşağıdaki fikri tam çalışan bir web uygulamasına dönüştür."
-            f"{template_section}\n\n"
-            f"Fikir: {idea}\n\n"
-            f"Kurallar:\n"
-            f"- Tek dosya çözüm (index.html içinde CSS ve JS)\n"
-            f"- Modern, responsive, karanlık tema\n"
-            f"- Türkçe yorum satırları\n"
-            f"- Sadece kodu döndür, açıklama yazma\n\n"
-            f"Çıktı formatı: sadece kod bloğu, başka hiçbir şey"
-        )
+        # Generate files
+        files_generated = []
+        for file_path in structure["files"]:
+            content = await self._generate_file(idea, file_path, tech_stack)
+            full_path = project_dir / file_path
+            full_path.parent.mkdir(parents=True, exist_ok=True)
+            full_path.write_text(content, encoding="utf-8")
+            files_generated.append(file_path)
 
-        generated_code = await self._call_llm(prompt)
-
-        # Markdown bloklarını sıyır
-        code_match = re.search(r"```(?:html|css|js)?\n?(.*?)```", generated_code, re.DOTALL)
-        if code_match:
-            generated_code = code_match.group(1)
-
-        # Dosyaya yaz
-        (target_dir / "index.html").write_text(generated_code, encoding="utf-8")
-
-        log = {
-            "idea": idea,
+        # Create metadata
+        metadata = {
+            "id": f"gen_{timestamp}",
+            "type": "generated",
+            "name": app_name,
+            "description": idea,
+            "components": structure.get("components", []),
             "tech_stack": tech_stack,
-            "project_name": project_name,
-            "generated_at": datetime.now().isoformat(),
-            "template_used": template_context is not None,
-            "file_size_bytes": len(generated_code),
+            "path": str(project_dir),
+            "files": files_generated,
+            "metadata": {
+                "original_idea": idea,
+                "generation_timestamp": datetime.now().isoformat(),
+            },
+            "created_at": datetime.now().isoformat(),
+            "embeddings_stored": False,
         }
-        (target_dir / "generation_log.json").write_text(
-            json.dumps(log, ensure_ascii=False, indent=2), encoding="utf-8"
+
+        # Save metadata
+        metadata_path = project_dir / "metadata.json"
+        metadata_path.write_text(json.dumps(metadata, indent=2, ensure_ascii=False), encoding="utf-8")
+
+        # Save generation log
+        log_path = project_dir / "generation_log.json"
+        log_path.write_text(
+            json.dumps({
+                "idea": idea,
+                "tech_stack": tech_stack,
+                "structure": structure,
+                "files_generated": len(files_generated),
+            }, indent=2),
+            encoding="utf-8",
         )
 
-        return {"path": str(target_dir), "project_name": project_name, "log": log}
+        logger.info("✅ Generated %d files for: %s", len(files_generated), app_name)
+        return metadata
 
-    # ------------------------------------------------------------------
-    # Internal
-    # ------------------------------------------------------------------
-    async def _call_llm(self, prompt: str) -> str:
-        async with httpx.AsyncClient(timeout=120) as client:
+    async def _generate_structure(self, idea: str, tech_stack: str) -> dict:
+        """Generate app structure using LLM."""
+        prompt = f"""You are an expert full-stack developer. Given this app idea, create a complete file structure.
+
+IDEA: {idea}
+TECH STACK: {tech_stack}
+
+Return JSON with:
+- files: list of file paths (e.g., ["index.html", "css/style.css", "js/app.js"])
+- components: list of UI components (e.g., ["navbar", "hero", "features", "footer"])
+- description: brief architecture description
+
+Make it production-ready with proper organization."""
+
+        import httpx
+        async with httpx.AsyncClient(timeout=60) as client:
             resp = await client.post(
-                self.ollama_url,
+                "http://localhost:11434/api/generate",
                 json={
                     "model": "qwen2.5:14b",
                     "prompt": prompt,
                     "stream": False,
-                    "options": {"num_ctx": 16384, "temperature": 0.3},
-                },
+                    "format": "json",
+                }
             )
-            return resp.json().get("response", "")
+            resp.raise_for_status()
+            result = resp.json()
+
+        try:
+            return json.loads(result["response"])
+        except:
+            # Fallback structure
+            return {
+                "files": ["index.html", "css/style.css", "js/app.js"],
+                "components": ["navbar", "hero", "footer"],
+                "description": "Simple web app",
+            }
+
+    async def _generate_file(
+        self,
+        idea: str,
+        file_path: str,
+        tech_stack: str,
+    ) -> str:
+        """Generate content for a single file."""
+        ext = Path(file_path).suffix.lower()
+
+        prompts = {
+            ".html": f"""Create a complete, production-ready HTML file for: {idea}
+
+Requirements:
+- Modern, professional design
+- Responsive (mobile-first)
+- Clean, semantic HTML5
+- Include meta tags for SEO
+- Use inline CSS for simplicity
+- Professional color scheme
+
+Return ONLY the complete HTML code, no explanations.""",
+
+            ".css": f"""Create professional CSS for: {idea}
+
+Requirements:
+- Modern design with CSS variables
+- Responsive grid/flexbox layouts
+- Smooth animations and transitions
+- Professional color palette
+- Clean typography
+
+Return ONLY the CSS code.""",
+
+            ".js": f"""Create JavaScript for: {idea}
+
+Requirements:
+- Clean, modular code
+- Event listeners for interactivity
+- Smooth animations
+- Form validation if needed
+- Local storage for persistence
+
+Return ONLY the JS code.""",
+
+            ".py": f"""Create Python code for: {idea}
+
+Requirements:
+- FastAPI backend
+- Proper error handling
+- RESTful API design
+- Database models if needed
+- Type hints
+
+Return ONLY the Python code.""",
+        }
+
+        prompt = prompts.get(ext, f"Create code for {file_path} for app idea: {idea}")
+
+        import httpx
+        async with httpx.AsyncClient(timeout=120) as client:
+            resp = await client.post(
+                "http://localhost:11434/api/generate",
+                json={
+                    "model": "qwen2.5-coder:14b",
+                    "prompt": prompt,
+                    "stream": False,
+                }
+            )
+            resp.raise_for_status()
+            result = resp.json()
+
+        return result.get("response", f"// TODO: Implement {file_path}")
+
+    @staticmethod
+    def _sanitize_name(text: str) -> str:
+        """Sanitize text to valid filename."""
+        import re
+        name = re.sub(r'[^a-zA-Z0-9_-]', '_', text[:30])
+        return name or "app"

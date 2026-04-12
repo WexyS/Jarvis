@@ -32,6 +32,8 @@ class AgentRole(str, Enum):
     CLIPBOARD = "clipboard"
     MEETING = "meeting"
     FILES = "files"
+    CALENDAR = "calendar"
+    TASK_MANAGER = "task_manager"
 
 
 class AgentStatus(str, Enum):

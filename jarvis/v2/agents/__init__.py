@@ -10,6 +10,8 @@ from .sysmon_agent import SystemMonitorAgent
 from .clipboard_agent import ClipboardAgent
 from .meeting_agent import MeetingAgent
 from .files_agent import FilesAgent
+from .calendar_agent import CalendarAgent
+from .task_manager_agent import TaskManagerAgent
 
 __all__ = [
     "Agent",
@@ -21,4 +23,6 @@ __all__ = [
     "ClipboardAgent",
     "MeetingAgent",
     "FileOrganizerAgent",
+    "CalendarAgent",
+    "TaskManagerAgent",
 ]

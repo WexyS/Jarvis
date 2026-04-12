@@ -6,7 +6,7 @@ import InputBox from './components/InputBox';
 import StatusBadge from './components/StatusBadge';
 import InspectorPanel from './components/InspectorPanel';
 import WorkspacePanel from './components/WorkspacePanel';
-import { AlertTriangle, WifiOff, PanelRightClose, PanelRightOpen } from 'lucide-react';
+import { AlertTriangle, WifiOff, PanelRightClose, PanelRightOpen, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type ActivePanel = 'chat' | 'workspace';
@@ -29,8 +29,8 @@ function App() {
   const [inspectorOpen, setInspectorOpen] = useState(true);
 
   return (
-    <div className="flex h-screen bg-jarvis-bg text-jarvis-text font-sans overflow-hidden">
-      {/* ── SIDEBAR (240px) ─────────────────────────────────────── */}
+    <div className="flex h-screen bg-white text-gray-900 font-sans overflow-hidden">
+      {/* ── SIDEBAR (260px) - Clean, minimal ────────────────────────── */}
       <Sidebar
         status={status}
         onClear={clearMessages}
@@ -38,45 +38,67 @@ function App() {
         onPanelChange={setActivePanel}
       />
 
-      {/* ── MAIN CONTENT (flexible) ─────────────────────────────── */}
+      {/* ── MAIN CONTENT - Focus on content ─────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
-        <header className="flex items-center justify-between px-6 py-3 border-b border-jarvis-border bg-jarvis-panel/80 backdrop-blur-sm">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setActivePanel(activePanel === 'chat' ? 'workspace' : 'chat')}
-              className="px-3 py-1.5 text-xs rounded-md bg-jarvis-card hover:bg-jarvis-border transition-colors"
-            >
-              {activePanel === 'chat' ? '🌐 Workspace' : '💬 Chat'}
-            </button>
-            <h2 className="text-sm font-medium text-jarvis-textMuted">
-              {isStreaming ? 'Processing...' : activePanel === 'chat' ? 'Ready' : 'Workspace'}
-            </h2>
+        {/* Header - Minimal, clean like verdent.ai */}
+        <header className="flex items-center justify-between px-8 py-4 border-b border-gray-200 bg-white">
+          <div className="flex items-center gap-4">
+            {/* Panel Toggle */}
+            <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg">
+              <button
+                onClick={() => setActivePanel('chat')}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                  activePanel === 'chat'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                💬 Chat
+              </button>
+              <button
+                onClick={() => setActivePanel('workspace')}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                  activePanel === 'workspace'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                🌐 Workspace
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-gray-400" />
+              <h2 className="text-sm font-medium text-gray-600">
+                {isStreaming ? 'Processing...' : activePanel === 'chat' ? 'Ready to assist' : 'Workspace'}
+              </h2>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
+
+          <div className="flex items-center gap-4">
             <StatusBadge status={status} isConnected={isConnected} />
             <button
               onClick={() => setInspectorOpen(!inspectorOpen)}
-              className="p-1.5 rounded-md hover:bg-jarvis-card transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
               title={inspectorOpen ? 'Close Inspector' : 'Open Inspector'}
             >
-              {inspectorOpen ? <PanelRightClose className="w-4 h-4" /> : <PanelRightOpen className="w-4 h-4" />}
+              {inspectorOpen ? <PanelRightClose className="w-5 h-5" /> : <PanelRightOpen className="w-5 h-5" />}
             </button>
           </div>
         </header>
 
-        {/* Error banner */}
+        {/* Error banner - Subtle, non-intrusive */}
         <AnimatePresence>
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="mx-6 mt-3 p-3 rounded-lg bg-jarvis-danger/10 border border-jarvis-danger/30 flex items-center gap-3"
+              className="mx-8 mt-4 p-4 rounded-lg bg-red-50 border border-red-200 flex items-center gap-3"
             >
-              <AlertTriangle className="w-4 h-4 text-jarvis-danger flex-shrink-0" />
-              <p className="text-sm text-jarvis-danger flex-1">{error}</p>
-              {!isConnected && <WifiOff className="w-4 h-4 text-jarvis-danger" />}
+              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
+              <p className="text-sm text-red-700 flex-1">{error}</p>
+              {!isConnected && <WifiOff className="w-4 h-4 text-red-600" />}
             </motion.div>
           )}
         </AnimatePresence>
@@ -100,15 +122,15 @@ function App() {
         )}
       </div>
 
-      {/* ── INSPECTOR PANEL (300px) ─────────────────────────────── */}
+      {/* ── INSPECTOR PANEL (320px) - Clean, organized ─────────────── */}
       <AnimatePresence>
         {inspectorOpen && (
           <motion.div
             initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 300, opacity: 1 }}
+            animate={{ width: 320, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="border-l border-jarvis-border bg-jarvis-panel/80 backdrop-blur-sm overflow-hidden"
+            className="border-l border-gray-200 bg-white overflow-hidden"
           >
             <InspectorPanel status={status} providers={providers} workspace={workspace} />
           </motion.div>
