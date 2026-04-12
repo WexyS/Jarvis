@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 # ─── Skill & Agent Discovery ────────────────────────────────────────────────
 
-from jarvis.v2.core.skill_manager import discover_all_skills, discover_all_agents
+from jarvis.v2.core.skill_manager import discover_all_skills, discover_all_agents # type: ignore
 
 def _discover_skills() -> list[dict]:
     """Discover all skills from all known directories."""
@@ -95,10 +95,11 @@ class Orchestrator:
         self.coder_llm_router = LLMRouter(
             ollama_model="qwen2.5-coder:7b",  # Coder keeps 7b for speed; cloud fallback for complex tasks
         )
-        # Enable OpenRouter for coder (Claude 3.5 Sonnet for complex coding)
-        or_key = __import__("os").environ.get("OPENROUTER_API_KEY", "")
-        if or_key:
-            self.coder_llm_router.enable_openrouter(or_key, model="anthropic/claude-3.5-sonnet")
+        # Enable ALL cloud providers on coder router for maximum fallback options
+        import os as _os
+        _os.environ.get  # just to ensure os module is available
+        coder_env = dict(_os.environ)
+        self.coder_llm_router.enable_all_providers(coder_env)
 
         # RPA + Researcher use the main router (qwen2.5-coder:14b — the new default)
 
