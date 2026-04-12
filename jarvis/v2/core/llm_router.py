@@ -575,6 +575,46 @@ class LLMRouter:
         # Hugging Face
         if env.get("HF_API_KEY"):
             self.enable_huggingface(env["HF_API_KEY"])
+        # DeepSeek
+        if env.get("DEEPSEEK_API_KEY"):
+            from jarvis.v2.providers.extra_providers import DeepSeekProvider
+            self.providers["deepseek"] = DeepSeekProvider(api_key=env["DEEPSEEK_API_KEY"])
+            if "deepseek" not in self.priority_order:
+                idx = 2  # After Groq
+                self.priority_order.insert(idx, "deepseek")
+                logger.info("DeepSeek enabled - cheap + powerful code")
+        # Anthropic
+        if env.get("ANTHROPIC_API_KEY"):
+            from jarvis.v2.providers.extra_providers import AnthropicProvider
+            self.providers["anthropic"] = AnthropicProvider(api_key=env["ANTHROPIC_API_KEY"])
+            if "anthropic" not in self.priority_order:
+                idx = 3
+                self.priority_order.insert(idx, "anthropic")
+                logger.info("Anthropic Claude enabled - best understanding")
+        # Mistral
+        if env.get("MISTRAL_API_KEY"):
+            from jarvis.v2.providers.extra_providers import MistralProvider
+            self.providers["mistral"] = MistralProvider(api_key=env["MISTRAL_API_KEY"])
+            if "mistral" not in self.priority_order:
+                idx = len(self.priority_order) - 1
+                self.priority_order.insert(idx, "mistral")
+                logger.info("Mistral enabled - GDPR compliant")
+        # Cohere
+        if env.get("COHERE_API_KEY"):
+            from jarvis.v2.providers.extra_providers import CohereProvider
+            self.providers["cohere"] = CohereProvider(api_key=env["COHERE_API_KEY"])
+            if "cohere" not in self.priority_order:
+                idx = len(self.priority_order) - 1
+                self.priority_order.insert(idx, "cohere")
+                logger.info("Cohere enabled - RAG reranking")
+        # Fireworks
+        if env.get("FIREWORKS_API_KEY"):
+            from jarvis.v2.providers.extra_providers import FireworksProvider
+            self.providers["fireworks"] = FireworksProvider(api_key=env["FIREWORKS_API_KEY"])
+            if "fireworks" not in self.priority_order:
+                idx = len(self.priority_order) - 1
+                self.priority_order.insert(idx, "fireworks")
+                logger.info("Fireworks enabled - ultra-fast inference")
         # OpenAI
         if env.get("OPENAI_API_KEY"):
             self.providers["openai"] = OpenAIProvider(
@@ -673,8 +713,9 @@ class LLMRouter:
         """Get status of ALL providers (active + inactive)."""
         result = {}
         # Show providers in priority order
-        all_known = ["groq", "openrouter_free", "ollama", "gemini", "cloudflare",
-                     "together", "huggingface", "openrouter", "openai"]
+        all_known = ["groq", "deepseek", "anthropic", "openrouter_free", "ollama", "gemini",
+                     "cloudflare", "together", "huggingface", "mistral", "cohere",
+                     "fireworks", "openrouter", "openai"]
         for name in all_known:
             provider = self.providers.get(name)
             if provider:
