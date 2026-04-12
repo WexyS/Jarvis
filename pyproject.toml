@@ -69,7 +69,7 @@ dependencies = [
 
     # ── Workspace & Agent RAG ─────────────────────────────────────────
     "playwright>=1.44.0",
-    "asyncio-throttle>=1.0.3",
+    "asyncio-throttle>=1.0.0",
     "bleach>=6.1.0",
     "cssutils>=2.10.0",
 

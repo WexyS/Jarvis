@@ -15,6 +15,7 @@ from pydantic import BaseModel
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+from starlette.responses import StreamingResponse
 
 START_TIME = time.time()
 _orchestrator: Optional["Orchestrator"] = None
@@ -286,6 +287,12 @@ class ChatRequest(BaseModel):
     stream: bool = False
 
 
+class TTSRequest(BaseModel):
+    text: str
+    language: str = "en"
+    voice: Optional[str] = None
+
+
 @app.post("/api/v2/chat")
 @limiter.limit("30/minute")
 async def provider_chat(req: ChatRequest, request: Request):
@@ -328,6 +335,44 @@ async def providers_status():
         }
     except Exception as e:
         return {"error": str(e)}
+
+
+# ──────────────────────────────────────────────────────────────────────
+# TTS Endpoint — Text-to-Speech via edge-tts
+# ──────────────────────────────────────────────────────────────────────
+
+@app.post("/api/v2/tts")
+@limiter.limit("60/minute")
+async def text_to_speech(req: TTSRequest, request: Request):
+    """Convert text to speech. Returns audio stream."""
+    try:
+        import edge_tts
+        import io
+
+        # Auto-select voice based on language
+        voice = req.voice
+        if not voice:
+            if req.language == "tr":
+                voice = "tr-TR-EmelNeural"
+            else:
+                voice = "en-US-JennyNeural"
+
+        communicate = edge_tts.Communicate(req.text, voice)
+        audio_data = bytearray()
+        async for chunk in communicate.stream():
+            if chunk["type"] == "audio":
+                audio_data.extend(chunk["data"])
+
+        return StreamingResponse(
+            iter([bytes(audio_data)]),
+            media_type="audio/mpeg",
+            headers={
+                "Content-Disposition": f'inline; filename="tts.mp3"',
+                "X-Voice": voice,
+            }
+        )
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 async def get_orchestrator():
     return _orchestrator
