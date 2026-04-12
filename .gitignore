@@ -21,6 +21,8 @@ config.yaml
 data/
 *.chroma
 *.sqlite
+*.db
+*.db-journal
 
 # Workspace
 workspace/
@@ -28,6 +30,10 @@ workspace/
 # Documents (user content)
 documents/
 notes/
+
+# Logs
+logs/
+*.log
 
 # IDE
 .idea/
@@ -39,5 +45,7 @@ notes/
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
+# Memory files
+memory.db
+memory.db-journal
+procedures.db

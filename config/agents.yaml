@@ -1,0 +1,72 @@
+# J.A.R.V.I.S v2.0 — Agent Configuration
+
+agents:
+  email:
+    enabled: true
+    check_interval_minutes: 30
+    max_emails_summary: 5
+    importance_threshold: 0.6
+
+  sysmon:
+    enabled: true
+    poll_interval_seconds: 5
+    alert_thresholds:
+      cpu_percent: 85
+      ram_percent: 90
+      disk_percent: 95
+
+  clipboard:
+    enabled: true
+    hotkey: "ctrl+shift+j"
+
+  meeting:
+    enabled: true
+    whisper_model: "base"       # tiny/base/small/medium/large
+    output_dir: "data/meetings"
+    language: "tr"              # Türkçe varsayılan
+
+  files:
+    enabled: true
+    watch_dirs:
+      - "~/Downloads"
+      - "~/Desktop"
+    organize_on_start: false
+
+  coder:
+    enabled: true
+    max_healing_iterations: 5
+    timeout_seconds: 30
+
+  researcher:
+    enabled: true
+    max_hops: 3
+    max_results_per_hop: 5
+
+  rpa:
+    enabled: true
+    ocr_engine: "easyocr"
+    screenshot_interval_ms: 500
+
+memory:
+  working:
+    max_messages: 20
+    summarize_threshold: 15
+  long_term:
+    db_path: "data/memory.db"
+    decay_days: 90
+    min_importance_to_store: 0.3
+    chroma_persist_dir: "data/memory_v2"
+  procedural:
+    db_path: "data/procedures.db"
+    min_success_rate: 0.7
+  consolidation:
+    run_at: "03:00"             # gece 3'te çalış
+
+llm:
+  primary: "ollama"
+  ollama_model: "qwen2.5:14b"
+  fallback_order:
+    - "openrouter"
+    - "groq"
+    - "gemini"
+    - "openai"

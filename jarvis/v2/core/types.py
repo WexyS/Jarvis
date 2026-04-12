@@ -26,6 +26,12 @@ class AgentRole(str, Enum):
     HOME_CONTROLLER = "home_controller"
     MEMORY_KEEPER = "memory_keeper"
     VOICE_ASSISTANT = "voice_assistant"
+    # ── Yeni Agentlar ─────────────────────────────────────
+    EMAIL = "email"
+    SYSMON = "sysmon"
+    CLIPBOARD = "clipboard"
+    MEETING = "meeting"
+    FILES = "files"
 
 
 class AgentStatus(str, Enum):

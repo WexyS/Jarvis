@@ -18,6 +18,12 @@ from jarvis.v2.memory.engine import MemoryEngine
 from jarvis.v2.agents.coder import CoderAgent
 from jarvis.v2.agents.researcher import ResearcherAgent
 from jarvis.v2.agents.rpa_operator import RPAOperatorAgent
+# ── Yeni Agentlar ─────────────────────────────────────
+from jarvis.v2.agents.email_agent import EmailAgent
+from jarvis.v2.agents.sysmon_agent import SystemMonitorAgent
+from jarvis.v2.agents.clipboard_agent import ClipboardAgent
+from jarvis.v2.agents.meeting_agent import MeetingAgent
+from jarvis.v2.agents.files_agent import FilesAgent
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +57,13 @@ INTENT_KEYWORDS = {
                "bilgi", "info", "durum", "status"],
     "file": ["dosya", "file", "oku", "okum", "read", "yaz", "write", "kaydet", "save", "oluştur",
              "create", "listele", "list", "klasör", "folder", "dizin", "directory"],
+    # ── Yeni Intentler ─────────────────────────────────────
+    "email": ["email", "e-posta", "mail", "gelen kutusu", "inbox", "mesaj oku",
+              "mail gönder", "mail gönder", "taslak", "draft"],
+    "meeting": ["toplantı", "meeting", "transkript", "kaydet", "record meeting",
+                "dikte", "ses kaydı", "voice note"],
+    "clipboard": ["pano", "clipboard", "kopyala", "paste", "yapıştır", "kod analiz",
+                  "code review bu kodu"],
 }
 
 
@@ -124,6 +137,52 @@ class Orchestrator:
             event_bus=self.event_bus,
             blackboard=self.blackboard,
         )
+
+        # ── Yeni Agentlar ──────────────────────────────────
+        try:
+            self.agents[AgentRole.EMAIL] = EmailAgent(
+                llm_router=self.llm_router,
+                event_bus=self.event_bus,
+                blackboard=self.blackboard,
+            )
+        except Exception as e:
+            logger.warning("Failed to initialize EmailAgent: %s", e)
+
+        try:
+            self.agents[AgentRole.SYSMON] = SystemMonitorAgent(
+                llm_router=self.llm_router,
+                event_bus=self.event_bus,
+                blackboard=self.blackboard,
+            )
+        except Exception as e:
+            logger.warning("Failed to initialize SystemMonitorAgent: %s", e)
+
+        try:
+            self.agents[AgentRole.CLIPBOARD] = ClipboardAgent(
+                llm_router=self.llm_router,
+                event_bus=self.event_bus,
+                blackboard=self.blackboard,
+            )
+        except Exception as e:
+            logger.warning("Failed to initialize ClipboardAgent: %s", e)
+
+        try:
+            self.agents[AgentRole.MEETING] = MeetingAgent(
+                llm_router=self.llm_router,
+                event_bus=self.event_bus,
+                blackboard=self.blackboard,
+            )
+        except Exception as e:
+            logger.warning("Failed to initialize MeetingAgent: %s", e)
+
+        try:
+            self.agents[AgentRole.FILES] = FilesAgent(
+                llm_router=self.llm_router,
+                event_bus=self.event_bus,
+                blackboard=self.blackboard,
+            )
+        except Exception as e:
+            logger.warning("Failed to initialize FilesAgent: %s", e)
 
         logger.info("Initialized %d agents", len(self.agents))
 
@@ -222,6 +281,12 @@ class Orchestrator:
                 result = await self._execute_rpa_task(user_input, intent, lesson_context)
         elif intent.get("type") == "multi":
             result = await self._execute_multi_task(user_input, intent, lesson_context)
+        elif intent.get("type") == "email":
+            result = await self._execute_email_task(user_input, intent, lesson_context)
+        elif intent.get("type") == "clipboard":
+            result = await self._execute_clipboard_task(user_input, intent, lesson_context)
+        elif intent.get("type") == "meeting":
+            result = await self._execute_meeting_task(user_input, intent, lesson_context)
         else:
             # General chat
             result = await self._general_chat(user_input, lesson_context)
@@ -267,9 +332,14 @@ class Orchestrator:
                     "- 'code': Writing, debugging, or executing code\n"
                     "- 'research': Finding information, web research, analysis\n"
                     "- 'rpa': Controlling the computer, clicking UI, opening apps\n"
+                    "- 'email': Reading, summarizing, or sending emails\n"
+                    "- 'system': CPU, RAM, disk monitoring, process management\n"
+                    "- 'clipboard': Analyzing clipboard content, code review from clipboard\n"
+                    "- 'meeting': Recording, transcribing, summarizing meetings\n"
+                    "- 'file': Organizing files, finding duplicates, desktop cleanup\n"
                     "- 'multi': Complex task requiring multiple agents\n"
                     "- 'chat': General conversation, simple questions\n\n"
-                    'Return JSON: {"type": "code|research|rpa|multi|chat", '
+                    'Return JSON: {"type": "code|research|rpa|email|system|clipboard|meeting|file|multi|chat", '
                     '"subtasks": ["task1", "task2"], '
                     '"requires_parallel": true/false}'
                 ),
@@ -495,6 +565,48 @@ class Orchestrator:
         )
         result = await agent.execute(task)
         return result.output or result.error or "No RPA result"
+
+    async def _execute_email_task(
+        self,
+        user_input: str,
+        intent: dict,
+        lesson_context: str,
+    ) -> str:
+        """Execute via EmailAgent."""
+        agent = self.agents.get(AgentRole.EMAIL)
+        if not agent:
+            return "⚠️ Email agent başlatılamadı. JARVIS_EMAIL_USER ve JARVIS_EMAIL_PASS ayarlanmış mı?"
+        task = Task(description=user_input, intent="email", context={"lesson_context": lesson_context})
+        result = await agent.execute(task)
+        return result.output or result.error or "Email işlemi tamamlandı."
+
+    async def _execute_clipboard_task(
+        self,
+        user_input: str,
+        intent: dict,
+        lesson_context: str,
+    ) -> str:
+        """Execute via ClipboardAgent."""
+        agent = self.agents.get(AgentRole.CLIPBOARD)
+        if not agent:
+            return "⚠️ Clipboard agent başlatılamadı. pyperclip kurulu mu?"
+        task = Task(description=user_input, intent="clipboard", context={"lesson_context": lesson_context})
+        result = await agent.execute(task)
+        return result.output or result.error or "Pano işlemi tamamlandı."
+
+    async def _execute_meeting_task(
+        self,
+        user_input: str,
+        intent: dict,
+        lesson_context: str,
+    ) -> str:
+        """Execute via MeetingAgent."""
+        agent = self.agents.get(AgentRole.MEETING)
+        if not agent:
+            return "⚠️ Meeting agent başlatılamadı."
+        task = Task(description=user_input, intent="meeting", context={"lesson_context": lesson_context})
+        result = await agent.execute(task)
+        return result.output or result.error or "Toplantı işlemi tamamlandı."
 
     async def _execute_multi_task(
         self,
