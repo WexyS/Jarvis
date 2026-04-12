@@ -167,24 +167,24 @@ cd jarvis-desktop && npm install && npm run dev
 Writes, debugs, and executes code with an auto-healing loop (up to 5 iterations).
 
 ```
-"Python ile fibonacci yaz"
-"Bu kodu düzelt"
+"Write a fibonacci function in Python"
+"Fix this bug"
 ```
 
 ### 2. ResearcherAgent 🔍
 Multi-hop web research via DuckDuckGo + URL scraping + LLM synthesis with citations.
 
 ```
-"Kuantum bilgi nedir?"
-"En iyi Rust frameworklerini araştır"
+"What is quantum computing?"
+"Research the best Rust frameworks"
 ```
 
 ### 3. RPAOperatorAgent 🖱️
 Computer-use agent — screenshot, OCR, mouse click, keyboard input, app launching.
 
 ```
-"Chrome'u aç"
-"YouTube'u aç"
+"Open Chrome"
+"Open YouTube"
 ```
 
 ### 4. EmailAgent 📧
@@ -192,16 +192,16 @@ Async IMAP/SMTP inbox reading, smart summarization, draft creation & sending.
 
 ```
 "Summarize my emails"            → Top 5 important emails
-"Sabah özeti"                    → Morning briefing
-"Write a meeting time to Ahmet"  → Draft email
+"Morning briefing"               → Morning briefing
+"Draft an email to John"         → Draft email
 ```
 
 ### 5. SystemMonitorAgent 🖥️
 Real-time CPU/RAM/disk monitoring with proactive threshold alerts.
 
 ```
-"Sistem durumu nedir?"           → Full metrics
-"En çok RAM kullanan processler" → Top processes
+"System status"                  → Full metrics
+"Top RAM-consuming processes"    → Top processes
 ```
 
 ### 6. ClipboardAgent 📋
@@ -209,7 +209,7 @@ Auto-detects clipboard content type (text/URL/code) and processes accordingly.
 
 ```
 "Analyze code in clipboard"     → Code review
-"Translate clipboard text"     → Translation
+"Translate clipboard text"      → Translation
 "Summarize clipboard URL"       → Fetch + summarize
 ```
 
@@ -228,9 +228,9 @@ Output: `data/meetings/YYYY-MM-DD_HH-MM.md`
 Content-based file classification, duplicate detection, desktop cleanup.
 
 ```
-"Organize Desktop"             → Organize Desktop
-"Find duplicates"              → Find duplicates
-"Organize Downloads"           → Organize Downloads
+"Organize desktop"              → Organize desktop
+"Find duplicates"               → Find duplicates
+"Organize downloads"            → Organize downloads
 ```
 
 ---
@@ -461,6 +461,40 @@ agents:
       - "~/Downloads"
       - "~/Desktop"
 ```
+
+---
+
+## 🎙️ Voice & Language
+
+Jarvis supports **voice input and output** with multi-language support:
+
+| Component | English | Turkish |
+|-----------|---------|---------|
+| **STT (Speech-to-Text)** | Google Web Speech API (en-US) + Whisper fallback | Google Web Speech API (tr-TR) + Whisper fallback |
+| **TTS (Text-to-Speech)** | edge-tts `en-US-JennyNeural` | edge-tts `tr-TR-EmelNeural` |
+| **VAD (Voice Activity)** | Silero VAD (universal) | Silero VAD (universal) |
+
+### Setup Voice
+
+```bash
+# 1. Install voice dependencies
+pip install SpeechRecognition openai-whisper torch edge-tts pygame sounddevice silero-vad
+
+# 2. Set language in .env
+JARVIS_LANGUAGE=en    # or "tr" for Turkish
+```
+
+### Voice Pipeline Flow
+
+```
+Microphone → Silero VAD → Google STT → Ollama LLM → edge-tts → Speaker
+                            ↓ (fallback)
+                        Whisper STT
+```
+
+- **Barge-in**: Jarvis stops speaking when you start talking
+- **Auto-detection**: Language is set via `JARVIS_LANGUAGE` in `.env`
+- **Offline option**: Whisper STT works entirely offline
 
 ---
 

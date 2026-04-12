@@ -26,17 +26,35 @@ logger = logging.getLogger(__name__)
 OLLAMA_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
 MODEL = os.environ.get("JARVIS_MODEL", "qwen2.5:14b")
 STT_ENGINE = os.environ.get("JARVIS_STT", "google")
-TTS_VOICE = os.environ.get("JARVIS_TTS_VOICE", "tr-TR-EmelNeural")
+LANGUAGE = os.environ.get("JARVIS_LANGUAGE", "en")  # "en" or "tr"
+
+# Language-specific voice settings
+VOICE_SETTINGS = {
+    "en": {
+        "stt_language": "en-US",
+        "whisper_language": "en",
+        "tts_voice": "en-US-JennyNeural",
+        "system_prompt_suffix": "You are J.A.R.V.I.S, a helpful AI assistant. Respond in English.",
+    },
+    "tr": {
+        "stt_language": "tr-TR",
+        "whisper_language": "tr",
+        "tts_voice": "tr-TR-EmelNeural",
+        "system_prompt_suffix": "Sen J.A.R.V.I.S, yardimsever bir yapay zeka asistanisin. Turkce yanit ver.",
+    },
+}
+
+_settings = VOICE_SETTINGS.get(LANGUAGE, VOICE_SETTINGS["en"])
 
 SAMPLE_RATE = 16000
-SILENCE_THRESHOLD = 0.03          # Silero esik degeri (hassas)
-SILENCE_TIMEOUT = 1.5            # saniye (hizli yanit)
-MAX_CONTEXT_MESSAGES = 6         # Baglam penceresi (8→6, memory azalt)
-LLM_TIMEOUT = 120                # saniye (27B→14B, daha hizli)
-LLM_NUM_PREDICT = 512            # Yanit uzunlugu (128→512)
-LLM_TEMPERATURE = 0.1            # Tutarli
-AUDIO_GAIN = 10.0                # Mikrofon sinyal kazanci (donanimsal dusuk seviye icin)
-BARGE_IN_DEBOUNCE = 2.0          # Saniye (barge-in firtinasini onler)
+SILENCE_THRESHOLD = 0.03
+SILENCE_TIMEOUT = 1.5
+MAX_CONTEXT_MESSAGES = 6
+LLM_TIMEOUT = 120
+LLM_NUM_PREDICT = 512
+LLM_TEMPERATURE = 0.1
+AUDIO_GAIN = 10.0
+BARGE_IN_DEBOUNCE = 2.0
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -283,9 +301,9 @@ for _agent in _DISCOVERED_AGENTS:
 # ──────────────────────────────────────────────────────────────────────────────
 
 class GoogleSTT:
-    """Google Web Speech API ile konusmayi metne cevir. Ucretsiz, Turkish destekli."""
+    """Google Web Speech API ile konusmayi metne cevir. Ucretsiz, coklu dil."""
 
-    def __init__(self, language: str = "tr-TR"):
+    def __init__(self, language: str = "en-US"):
         self.language = language
         self._available = self._check_availability()
 
@@ -311,8 +329,8 @@ class GoogleSTT:
             # (sample_rate, sample_width=2 for int16)
             audio_data = sr.AudioData(audio_bytes, SAMPLE_RATE, 2)
 
-            # Google Web Speech API - Turkce
-            text = recognizer.recognize_google(audio_data, language="tr-TR")
+            # Google Web Speech API
+            text = recognizer.recognize_google(audio_data, language=self.language)
             return text.strip() if text else ""
         except sr.RequestError:
             logger.warning("Google STT erisim hatasi (internet kontrol et)")
@@ -377,7 +395,7 @@ class WhisperSTT:
 
             result = self._model.transcribe(
                 tmp_path,
-                language="tr",
+                language=_settings["whisper_language"],
                 task="transcribe",
                 fp16=(self._device == "cuda"),
                 verbose=False,
@@ -642,14 +660,14 @@ class VoicePipeline:
         self.input_device = input_device  # FIX: Allow explicit device selection
 
         # STT: Google (oncelikli) -> Whisper (yedek)
-        self.stt_primary = GoogleSTT(language="tr-TR")
+        self.stt_primary = GoogleSTT(language=_settings["stt_language"])
         self.stt_fallback = WhisperSTT(model_name="base")
 
         # VAD
         self.vad = SileroVAD(threshold=SILENCE_THRESHOLD)
 
         # TTS
-        self.tts = EdgeTTS(voice=TTS_VOICE)
+        self.tts = EdgeTTS(voice=_settings["tts_voice"])
 
         # Baglam
         system_prompt = self._build_system_prompt()
@@ -733,6 +751,9 @@ class VoicePipeline:
         if _DISCOVERED_AGENTS:
             agents = ", ".join(a["agent_name"] for a in _DISCOVERED_AGENTS[:10])
             tools += f"\nAgents: {agents}\n"
+
+        # Language suffix for system prompt
+        tools += f"\n{_settings['system_prompt_suffix']}"
 
         return base + tools
 
