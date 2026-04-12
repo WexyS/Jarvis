@@ -678,8 +678,10 @@ class LLMRouter:
         for name in all_known:
             provider = self.providers.get(name)
             if provider:
+                # Handle both BaseProvider (is_configured) and LLMProvider (is_available)
+                available = provider.is_configured() if hasattr(provider, 'is_configured') else provider.is_available()
                 result[name] = {
-                    "available": provider.is_configured(),
+                    "available": available,
                     "model": provider.get_model_name(),
                     "stats": {
                         "total_calls": provider.stats.total_calls,
