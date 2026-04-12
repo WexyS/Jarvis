@@ -16,12 +16,14 @@ from .base import BaseProvider, Message, ProviderConfig, ProviderResult
 
 
 class GroqProvider(BaseProvider):
-    def __init__(self):
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
+        ak = api_key or os.getenv("GROQ_API_KEY")
+        md = model or os.getenv("GROQ_DEFAULT_MODEL", "llama-3.3-70b-versatile")
         super().__init__(ProviderConfig(
             name="groq",
-            api_key=os.getenv("GROQ_API_KEY"),
+            api_key=ak,
             base_url="https://api.groq.com/openai/v1",
-            default_model=os.getenv("GROQ_DEFAULT_MODEL", "llama-3.3-70b-versatile"),
+            default_model=md,
             max_tokens=8192, timeout=30, priority=2
         ))
 
@@ -75,12 +77,14 @@ class GroqProvider(BaseProvider):
 
 
 class GeminiProvider(BaseProvider):
-    def __init__(self):
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
+        ak = api_key or os.getenv("GEMINI_API_KEY")
+        md = model or os.getenv("GEMINI_DEFAULT_MODEL", "gemini-2.0-flash-lite")
         super().__init__(ProviderConfig(
             name="gemini",
-            api_key=os.getenv("GEMINI_API_KEY"),
+            api_key=ak,
             base_url="https://generativelanguage.googleapis.com/v1beta/models",
-            default_model=os.getenv("GEMINI_DEFAULT_MODEL", "gemini-2.0-flash-lite"),
+            default_model=md,
             max_tokens=8192, timeout=60, priority=3
         ))
 
@@ -116,12 +120,14 @@ class GeminiProvider(BaseProvider):
 
 
 class CloudflareProvider(BaseProvider):
-    def __init__(self):
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
+        ak = api_key or os.getenv("CLOUDFLARE_API_KEY")
+        md = model or os.getenv("CLOUDFLARE_DEFAULT_MODEL", "@cf/meta/llama-3.1-8b-instruct")
         super().__init__(ProviderConfig(
             name="cloudflare",
-            api_key=os.getenv("CLOUDFLARE_API_KEY"),
+            api_key=ak,
             base_url=f"https://api.cloudflare.com/client/v4/accounts/{os.getenv('CLOUDFLARE_ACCOUNT_ID', '')}/ai/run",
-            default_model=os.getenv("CLOUDFLARE_DEFAULT_MODEL", "@cf/meta/llama-3.1-8b-instruct"),
+            default_model=md,
             max_tokens=4096, timeout=60, priority=4
         ))
 
@@ -152,12 +158,14 @@ class CloudflareProvider(BaseProvider):
 
 
 class TogetherProvider(BaseProvider):
-    def __init__(self):
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
+        ak = api_key or os.getenv("TOGETHER_API_KEY")
+        md = model or os.getenv("TOGETHER_DEFAULT_MODEL", "meta-llama/Llama-3-8b-chat-hf")
         super().__init__(ProviderConfig(
             name="together",
-            api_key=os.getenv("TOGETHER_API_KEY"),
+            api_key=ak,
             base_url="https://api.together.xyz/v1",
-            default_model=os.getenv("TOGETHER_DEFAULT_MODEL", "meta-llama/Llama-3-8b-chat-hf"),
+            default_model=md,
             max_tokens=4096, timeout=60, priority=5
         ))
 
@@ -192,12 +200,14 @@ class TogetherProvider(BaseProvider):
 
 
 class HFProvider(BaseProvider):
-    def __init__(self):
+    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
+        ak = api_key or os.getenv("HF_API_KEY")
+        md = model or os.getenv("HF_DEFAULT_MODEL", "mistralai/Mistral-7B-Instruct-v0.3")
         super().__init__(ProviderConfig(
             name="huggingface",
-            api_key=os.getenv("HF_API_KEY"),
+            api_key=ak,
             base_url="https://api-inference.huggingface.co/models",
-            default_model=os.getenv("HF_DEFAULT_MODEL", "mistralai/Mistral-7B-Instruct-v0.3"),
+            default_model=md,
             max_tokens=2048, timeout=60, priority=6
         ))
 
