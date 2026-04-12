@@ -629,7 +629,14 @@ class LLMRouter:
         healthy = []
         for name in self.priority_order:
             provider = self.providers.get(name)
-            if provider and provider.is_configured():
+            if not provider:
+                continue
+            # Handle both BaseProvider (is_configured) and LLMProvider (is_available)
+            if hasattr(provider, 'is_configured'):
+                available = provider.is_configured()
+            else:
+                available = provider.is_available()
+            if available:
                 healthy.append(name)
         return healthy
 
