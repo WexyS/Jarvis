@@ -52,7 +52,7 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen bg-[var(--color-bg)] text-[var(--color-text)] font-sans overflow-hidden">
+    <div className="flex h-screen bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 font-sans overflow-hidden">
       {/* ── SIDEBAR (260px) - Clean, minimal ────────────────────────── */}
       <Sidebar
         status={status}

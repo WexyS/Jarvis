@@ -11,16 +11,16 @@ interface SidebarProps {
 
 export default function Sidebar({ status, onClear, activePanel, onPanelChange }: SidebarProps) {
   return (
-    <div className="w-64 bg-[var(--color-panel)] border-r border-[var(--color-border)] flex flex-col">
+    <div className="w-64 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col">
       {/* Logo / Brand */}
-      <div className="px-6 py-5 border-b border-[var(--color-border)]">
+      <div className="px-6 py-5 border-b border-gray-200 dark:border-slate-700">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
             <Zap className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-[var(--color-text)]">Jarvis</h1>
-            <p className="text-xs text-[var(--color-text-secondary)]">AI Assistant v2.1</p>
+            <h1 className="text-lg font-bold text-gray-900 dark:text-white">Jarvis</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400">AI Assistant v2.1</p>
           </div>
         </div>
       </div>
@@ -31,8 +31,8 @@ export default function Sidebar({ status, onClear, activePanel, onPanelChange }:
           onClick={() => onPanelChange('chat')}
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
             activePanel === 'chat'
-              ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
-              : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-card)]'
+              ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
           }`}
         >
           <MessageSquare className="w-5 h-5" />
@@ -43,8 +43,8 @@ export default function Sidebar({ status, onClear, activePanel, onPanelChange }:
           onClick={() => onPanelChange('workspace')}
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
             activePanel === 'workspace'
-              ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
-              : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-card)]'
+              ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
           }`}
         >
           <Globe className="w-5 h-5" />
@@ -55,8 +55,8 @@ export default function Sidebar({ status, onClear, activePanel, onPanelChange }:
           onClick={() => onPanelChange('agents')}
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
             activePanel === 'agents'
-              ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
-              : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-card)]'
+              ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
           }`}
         >
           <Bot className="w-5 h-5" />
@@ -65,24 +65,24 @@ export default function Sidebar({ status, onClear, activePanel, onPanelChange }:
       </nav>
 
       {/* Status */}
-      <div className="px-3 py-4 border-t border-[var(--color-border)]">
-        <div className="px-3 py-2 bg-[var(--color-card)] rounded-lg">
-          <p className="text-xs text-[var(--color-text-secondary)] mb-1">Status</p>
-          <p className="text-sm font-medium text-[var(--color-text)] capitalize">{status}</p>
+      <div className="px-3 py-4 border-t border-gray-200 dark:border-slate-700">
+        <div className="px-3 py-2 bg-gray-50 dark:bg-slate-700 rounded-lg">
+          <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Status</p>
+          <p className="text-sm font-medium text-gray-900 dark:text-white capitalize">{status}</p>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="px-3 py-4 border-t border-[var(--color-border)] space-y-2">
+      <div className="px-3 py-4 border-t border-gray-200 dark:border-slate-700 space-y-2">
         <button
           onClick={onClear}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[var(--color-text-secondary)] hover:bg-[var(--color-card)] transition-all"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all"
         >
           <Trash2 className="w-5 h-5" />
           <span className="font-medium">Clear Chat</span>
         </button>
 
-        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[var(--color-text-secondary)] hover:bg-[var(--color-card)] transition-all">
+        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all">
           <Settings className="w-5 h-5" />
           <span className="font-medium">Settings</span>
         </button>
