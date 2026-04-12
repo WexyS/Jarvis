@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useJarvis } from './hooks/useJarvis';
 import Sidebar from './components/Sidebar';
 import ChatArea from './components/ChatArea';
@@ -6,10 +6,11 @@ import InputBox from './components/InputBox';
 import StatusBadge from './components/StatusBadge';
 import InspectorPanel from './components/InspectorPanel';
 import WorkspacePanel from './components/WorkspacePanel';
-import { AlertTriangle, WifiOff, PanelRightClose, PanelRightOpen, Sparkles } from 'lucide-react';
+import { AlertTriangle, WifiOff, PanelRightClose, PanelRightOpen, Sparkles, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type ActivePanel = 'chat' | 'workspace';
+type Theme = 'light' | 'dark';
 
 function App() {
   const {
@@ -27,9 +28,27 @@ function App() {
 
   const [activePanel, setActivePanel] = useState<ActivePanel>('chat');
   const [inspectorOpen, setInspectorOpen] = useState(true);
+  const [theme, setTheme] = useState<Theme>(() => {
+    // Load theme from localStorage or default to light
+    return (localStorage.getItem('jarvis-theme') as Theme) || 'light';
+  });
+
+  // Apply theme to document
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('jarvis-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   return (
-    <div className="flex h-screen bg-white text-gray-900 font-sans overflow-hidden">
+    <div className="flex h-screen bg-[var(--color-bg)] text-[var(--color-text)] font-sans overflow-hidden">
       {/* ── SIDEBAR (260px) - Clean, minimal ────────────────────────── */}
       <Sidebar
         status={status}
@@ -130,12 +149,45 @@ function App() {
             animate={{ width: 320, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="border-l border-gray-200 bg-white overflow-hidden"
+            className="border-l border-[var(--color-border)] bg-[var(--color-panel)] overflow-hidden"
           >
             <InspectorPanel status={status} providers={providers} workspace={workspace} />
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ── THEME TOGGLE BUTTON ─────────────────────────────────────── */}
+      <motion.button
+        onClick={toggleTheme}
+        className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-[var(--color-panel)] border border-[var(--color-border)] shadow-lg hover:scale-110 transition-transform"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+      >
+        <AnimatePresence mode="wait">
+          {theme === 'light' ? (
+            <motion.div
+              key="moon"
+              initial={{ rotate: -90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: 90, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Moon className="w-5 h-5 text-[var(--color-text)]" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="sun"
+              initial={{ rotate: 90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              exit={{ rotate: -90, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Sun className="w-5 h-5 text-[var(--color-text)]" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.button>
     </div>
   );
 }

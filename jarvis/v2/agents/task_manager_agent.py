@@ -116,7 +116,7 @@ Prioritize tasks intelligently and suggest next actions."""
 
         # Complete task
         elif any(word in lower for word in ["complete", "done", "finish", "mark done"]):
-            return self._complete_task(user_input)
+            return await self._complete_task(user_input)
 
         # Delete task
         elif any(word in lower for word in ["delete", "remove", "cancel task"]):
@@ -193,7 +193,7 @@ Prioritize tasks intelligently and suggest next actions."""
             f"  📝 {task.get('description', 'No description')}"
         )
 
-    def _complete_task(self, user_input: str) -> str:
+    async def _complete_task(self, user_input: str) -> str:
         """Mark a task as complete."""
         # Simplified - complete last task
         for task in reversed(self._tasks):
@@ -202,7 +202,7 @@ Prioritize tasks intelligently and suggest next actions."""
                 task["completed_at"] = datetime.now().isoformat()
                 await self._publish_event("task_completed", task)
                 return f"✅ Completed: {task['title']}"
-        
+
         return "📋 No pending tasks to complete."
 
     def _delete_task(self, user_input: str) -> str:
