@@ -1,6 +1,6 @@
 """Provider package — Multi-provider LLM router with fallback."""
 
-from .base import BaseProvider, Message, ProviderConfig, ProviderResult
+from .base import BaseProvider, Message, ProviderConfig, ProviderResult, ProviderStats
 from .all_providers import (
     CloudflareProvider,
     GeminiProvider,

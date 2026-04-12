@@ -112,7 +112,7 @@ class ProviderRouter:
     def available_providers(self) -> list[str]:
         return list(self.providers.keys())
 
-    async def provider_status(self) -> dict:
+    async def provider_status(self) -> dict: # type: ignore
         """Her sağlayıcının erişilebilirlik durumunu döndür."""
         results = {}
         for name, provider in self.providers.items():
@@ -135,4 +135,4 @@ class ProviderRouter:
                     "configured": provider.is_configured(),
                     "model": provider.config.default_model,
                 }
-        return results
+        return results # type: ignore

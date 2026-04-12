@@ -1,8 +1,37 @@
 """Base provider abstract classes."""
 
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import AsyncIterator, Optional
 from pydantic import BaseModel
+
+
+class ProviderStats:
+    """Provider statistics and health metrics."""
+    def __init__(self):
+        self.total_calls: int = 0
+        self.successful_calls: int = 0
+        self.failed_calls: int = 0
+        self.total_latency_ms: float = 0
+        self.total_cost_usd: float = 0
+        self.last_active: Optional[datetime] = None
+        self.last_error: str = ""
+        self.consecutive_failures: int = 0
+
+    @property
+    def success_rate(self) -> float:
+        total = self.successful_calls + self.failed_calls
+        return self.successful_calls / total if total > 0 else 0.0
+
+    @property
+    def avg_latency_ms(self) -> float:
+        return self.total_latency_ms / self.successful_calls if self.successful_calls > 0 else 0.0
+
+    @property
+    def health_score(self) -> float:
+        if self.consecutive_failures >= 5:
+            return 0.0
+        return max(0.0, self.success_rate * 0.7 + (0.3 if self.avg_latency_ms < 2000 else 0.0))
 
 
 class Message(BaseModel):
@@ -32,6 +61,7 @@ class ProviderResult(BaseModel):
 class BaseProvider(ABC):
     def __init__(self, config: ProviderConfig):
         self.config = config
+        self.stats = ProviderStats()
 
     @abstractmethod
     def is_configured(self) -> bool:
