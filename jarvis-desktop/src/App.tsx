@@ -6,10 +6,11 @@ import InputBox from './components/InputBox';
 import StatusBadge from './components/StatusBadge';
 import InspectorPanel from './components/InspectorPanel';
 import WorkspacePanel from './components/WorkspacePanel';
+import AgentsPanel from './components/AgentsPanel';
 import { AlertTriangle, WifiOff, PanelRightClose, PanelRightOpen, Sparkles, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type ActivePanel = 'chat' | 'workspace';
+type ActivePanel = 'chat' | 'workspace' | 'agents';
 type Theme = 'light' | 'dark';
 
 function App() {
@@ -136,8 +137,10 @@ function App() {
               isConnected={isConnected}
             />
           </>
-        ) : (
+        ) : activePanel === 'workspace' ? (
           <WorkspacePanel />
+        ) : (
+          <AgentsPanel />
         )}
       </div>
 
