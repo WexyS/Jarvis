@@ -1,0 +1,43 @@
+# Dependencies
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Config with secrets
+.env
+config.yaml
+
+# Data & indexes
+data/
+*.chroma
+*.sqlite
+
+# Workspace
+workspace/
+
+# Documents (user content)
+documents/
+notes/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

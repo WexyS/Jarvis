@@ -1,0 +1,56 @@
+[project]
+name = "jarvis-assistant"
+version = "3.1.0"
+description = "Kişisel Yapay Zeka Asistanı — Qwen 3.5 27B + Google STT + edge-tts"
+requires-python = ">=3.10"
+dependencies = [
+    # Core
+    "ollama>=0.3.0",
+    "httpx>=0.27.0",
+    "requests>=2.31.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0.0",
+    "rich>=13.7.0",
+    "numpy>=1.24.0",
+    "psutil>=5.9.0",
+    # Voice
+    "SpeechRecognition>=3.10.0",
+    "openai-whisper>=20240930",
+    "edge-tts>=6.1.0",
+    "pygame>=2.5.0",
+    "sounddevice>=0.4.6",
+    "soundfile>=0.12.0",
+    "torch>=2.0.0",
+    "torchaudio>=2.0.0",
+    # Search & Web
+    "duckduckgo-search>=6.0.0",
+    "beautifulsoup4>=4.12.0",
+    "markdown>=3.6.0",
+    # RAG
+    "chromadb>=0.5.0",
+    "langchain>=0.2.0",
+    "langchain-community>=0.2.0",
+    "langchain-ollama>=0.1.0",
+    "langchain-text-splitters>=0.2.0",
+    # ── v2.0 Multi-Agent & RPA (NEW) ──
+    "openai>=1.30.0",        # vLLM + OpenAI provider
+    "pyautogui>=0.9.54",     # RPA: mouse/keyboard control
+    "mss>=9.0.0",            # RPA: fast screen capture
+    "easyocr>=1.7.0",        # RPA: OCR from screenshots
+    "opencv-python>=4.8.0",  # RPA: image processing
+    "networkx>=3.0",         # Memory: knowledge graph
+    "sentence-transformers>=2.2.0",  # Memory: local embeddings
+    "diskcache>=5.6.0",      # Memory: disk-backed cache
+    "aiosignal>=1.3.0",      # Async event bus
+]
+
+[project.scripts]
+jarvis = "jarvis.cli:main"
+
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["jarvis*"]

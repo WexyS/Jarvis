@@ -1,0 +1,120 @@
+# Jarvis Personal AI Assistant - Configuration Template
+# Copy this file to config.yaml and fill in your values
+
+# Model configuration
+model:
+  ollama_model: "qwen3.5:27b"
+  ollama_base_url: "http://localhost:11434"
+  max_tokens: 4096
+  temperature: 0.7
+  language: "tr"
+  openai_api_key: ""
+
+# Text-to-Speech settings
+tts:
+  enabled: true
+  # Engine: "pyttsx3" (local, no API key) or "edge" (better quality, requires edge-tts)
+  engine: "pyttsx3"
+  voice_rate: 150  # Words per minute equivalent
+
+# Morning Briefing settings
+briefing:
+  enabled: true
+  # Time to deliver briefing (24h format)
+  time: "08:00"
+  # Include news in briefing
+  include_news: true
+  news_sources:
+    - "https://news.ycombinator.com/rss"
+    - "https://feeds.bbci.co.uk/news/technology/rss.xml"
+  # Number of news items to summarize
+  news_count: 5
+
+# Email settings
+email:
+  # Provider: "imap" or "gmail_api"
+  provider: "imap"
+  # IMAP settings
+  imap_server: "imap.gmail.com"
+  imap_port: 993
+  imap_username: ""  # Set via env var JARVIS_EMAIL_USER
+  imap_password: ""  # Set via env var JARVIS_EMAIL_PASS
+  # Gmail API settings (if provider is "gmail_api")
+  gmail_credentials_file: ""  # Path to OAuth credentials JSON
+  # Max emails to read in briefing
+  max_emails: 10
+
+# Calendar settings
+calendar:
+  enabled: false
+  provider: "google"
+  google_credentials_file: ""  # Path to OAuth credentials JSON
+  # Hours ahead to look for events
+  hours_ahead: 24
+
+# Document indexing (RAG)
+documents:
+  enabled: true
+  # Directories to index
+  paths:
+    - "./documents"
+    - "./notes"
+  # File extensions to index
+  extensions:
+    - ".txt"
+    - ".md"
+    - ".pdf"
+    - ".docx"
+  # ChromaDB persistence directory
+  persist_directory: "./data/chroma_db"
+  # Chunk size for document splitting
+  chunk_size: 1000
+  chunk_overlap: 200
+
+# Coding assistant
+coding:
+  enabled: true
+  # Allow executing generated code (DANGEROUS - review code first)
+  allow_execution: false
+  # Working directory for file operations
+  work_dir: "./workspace"
+  # Allowed file extensions for reading
+  allowed_read_extensions:
+    - ".py"
+    - ".js"
+    - ".ts"
+    - ".jsx"
+    - ".tsx"
+    - ".md"
+    - ".txt"
+    - ".json"
+    - ".yaml"
+    - ".yml"
+    - ".toml"
+    - ".cfg"
+    - ".ini"
+    - ".html"
+    - ".css"
+    - ".sql"
+    - ".sh"
+    - ".bat"
+
+# Memory & learning
+memory:
+  enabled: true
+  # Response cache (fast repeated queries)
+  cache_size: 500          # Max cached responses
+  cache_ttl_hours: 48      # How long to keep cache entries
+  cache_similarity: 0.80   # How similar a query must be for cache hit
+  # Persistent memory directory
+  persist_dir: "./data/memory"
+  # Self-learning (extracts insights from conversations)
+  auto_learn: true
+  learn_batch_size: 5      # Consolidate memories every N conversations
+  # Whisper STT model (tiny, base, small, medium, large)
+  whisper_model: "base"
+
+# Logging
+logging:
+  level: "INFO"
+  file: "./data/jarvis.log"
