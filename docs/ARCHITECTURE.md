@@ -1,5 +1,7 @@
 # Jarvis v2.0 — Ultimate Autonomous Agent Architecture
 
+> **Jarvis** is an independent, locally-hosted, fully autonomous AI assistant. Built from scratch for privacy, speed, and complete autonomy.
+
 ## System Architecture Blueprint
 
 ```

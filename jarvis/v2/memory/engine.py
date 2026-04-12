@@ -1,7 +1,6 @@
 """Memory Engine — Vector DB + Graph DB + Self-Learning Loop.
 
-Superior to OpenJarvis: aggressive continuous learning, failure analysis,
-and automatic prompt/skill updates.
+Aggressive continuous learning, failure analysis, and automatic prompt/skill updates.
 """
 
 from __future__ import annotations

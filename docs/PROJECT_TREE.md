@@ -19,7 +19,7 @@ Jarvis/
 │   ├── README.md                # Ana dokümantasyon
 │   ├── USAGE.md                 # Kullanım kılavuzu
 │   ├── ARCHITECTURE.md          # Mimari diyagram
-│   ├── COMPARISON.md            # OpenJarvis karşılaştırma
+│   ├── COMPARISON.md            # Proje karşılaştırma raporu
 │   ├── AUDIT_REPORT.md          # Debug raporu
 │   ├── PROMPT.txt               # Sistem promptu
 │   └── TECH_STACK.md            # Teknoloji yığını

@@ -22,36 +22,35 @@ def discover_all_skills() -> list[dict]:
     for search_dir in search_dirs:
         if not search_dir.is_dir():
             continue
-        for skill_dir in sorted(search_dir.iterdir()):
-            if not skill_dir.is_dir() or skill_dir.name.startswith("."):
-                continue
-            # Look for SKILL.md or skill.json
-            skill_md = skill_dir / "SKILL.md"
-            skill_json = skill_dir / "skill.json"
-
-            if skill_md.exists():
+        for item in sorted(search_dir.iterdir()):
+            # Check for SKILL.md in directories
+            if item.is_dir() and not item.name.startswith("."):
+                skill_md = item / "SKILL.md"
+                if skill_md.exists():
+                    try:
+                        content = skill_md.read_text(encoding="utf-8", errors="replace")
+                        desc = content[:200].strip()
+                        skills.append({
+                            "name": item.name,
+                            "description": f"Skill: {item.name}. {desc}",
+                            "path": str(item),
+                            "source": str(search_dir),
+                        })
+                    except Exception as e:
+                        logger.debug("Failed to read skill %s: %s", item.name, e)
+            # Check for .md files directly
+            elif item.is_file() and item.suffix == ".md" and not item.name.startswith("."):
                 try:
-                    content = skill_md.read_text(encoding="utf-8", errors="replace")
+                    content = item.read_text(encoding="utf-8", errors="replace")
                     desc = content[:200].strip()
                     skills.append({
-                        "name": skill_dir.name,
-                        "description": f"Skill: {skill_dir.name}. {desc}",
-                        "path": str(skill_dir),
+                        "name": item.stem,
+                        "description": f"Skill: {item.stem}. {desc}",
+                        "path": str(item),
                         "source": str(search_dir),
                     })
                 except Exception as e:
-                    logger.debug("Failed to read skill %s: %s", skill_dir.name, e)
-            elif skill_json.exists():
-                try:
-                    data = json.loads(skill_json.read_text(encoding="utf-8"))
-                    skills.append({
-                        "name": skill_dir.name,
-                        "description": data.get("description", f"Skill: {skill_dir.name}"),
-                        "path": str(skill_dir),
-                        "source": str(search_dir),
-                    })
-                except Exception as e:
-                    logger.debug("Failed to read skill.json %s: %s", skill_dir.name, e)
+                    logger.debug("Failed to read skill file %s: %s", item.name, e)
 
     return skills
 
@@ -68,25 +67,37 @@ def discover_all_agents() -> list[dict]:
     for search_dir in search_dirs:
         if not search_dir.is_dir():
             continue
-        for agent_dir in sorted(search_dir.iterdir()):
-            if not agent_dir.is_dir() or agent_dir.name.startswith("."):
-                continue
-            # Look for AGENT.md, agent.json, config.json, or README.md
-            for config_name in ["AGENT.md", "agent.json", "config.json", "README.md"]:
-                config_file = agent_dir / config_name
-                if config_file.exists():
-                    try:
-                        content = config_file.read_text(encoding="utf-8", errors="replace")
-                        desc = content[:200].strip()
-                        agents.append({
-                            "name": agent_dir.name,
-                            "description": f"Agent: {agent_dir.name}. {desc}",
-                            "path": str(agent_dir),
-                            "source": str(search_dir),
-                        })
-                    except Exception as e:
-                        logger.debug("Failed to read agent %s: %s", agent_dir.name, e)
-                    break
+        for item in sorted(search_dir.iterdir()):
+            # Check for AGENT.md, agent.json, config.json, README.md in directories
+            if item.is_dir() and not item.name.startswith("."):
+                for config_name in ["AGENT.md", "agent.json", "config.json", "README.md"]:
+                    config_file = item / config_name
+                    if config_file.exists():
+                        try:
+                            content = config_file.read_text(encoding="utf-8", errors="replace")
+                            desc = content[:200].strip()
+                            agents.append({
+                                "name": item.name,
+                                "description": f"Agent: {item.name}. {desc}",
+                                "path": str(item),
+                                "source": str(search_dir),
+                            })
+                        except Exception as e:
+                            logger.debug("Failed to read agent %s: %s", item.name, e)
+                        break
+            # Check for .md files directly (e.g., accessibility-tester.md)
+            elif item.is_file() and item.suffix == ".md" and not item.name.startswith("."):
+                try:
+                    content = item.read_text(encoding="utf-8", errors="replace")
+                    desc = content[:200].strip()
+                    agents.append({
+                        "name": item.stem,
+                        "description": f"Agent: {item.stem}. {desc}",
+                        "path": str(item),
+                        "source": str(search_dir),
+                    })
+                except Exception as e:
+                    logger.debug("Failed to read agent file %s: %s", item.name, e)
 
     return agents
 

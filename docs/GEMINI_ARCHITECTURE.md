@@ -365,3 +365,27 @@ python -m jarvis.cli --cli
 
 **END OF ARCHITECTURE DOCUMENT**
 This document contains every component, file, dependency, fix, and workflow in the Jarvis v2.0 project. Give it to Gemini for full context awareness.
+  
+  
+  
+### Discovery  
+- **Skills**: 1458 discovered from `~/.qwen/skills/` (directories + .md files)  
+- **Agents**: 186 discovered from `~/.qwen/agents/` (directories + .md files)  
+  
+### How to Add More Skills/Agents  
+1. Place `.md` file in `~/.qwen/skills/` or `~/.qwen/agents/`  
+2. Or create directory with SKILL.md / AGENT.md inside  
+3. Auto-discovered on next orchestrator start  
+  
+### Top Agent Categories (186 total)  
+- Development: python-expert, react-specialist, typescript-expert, etc.  
+- Infrastructure: cloud-architect, devops-engineer, kubernetes-specialist  
+- Security: penetration-tester, security-auditor, vulnerability-scanner  
+- AI/ML: ai-engineer, ml-engineer, mlops-engineer, rag-engineer  
+- Design: ui-designer, ux-researcher, ui-component-generator  
+- Data: data-engineer, data-scientist, database-expert, sql-pro  
+  
+### Integration Points  
+- Orchestrator discovers skills/agents at startup via `skill_manager.py`  
+- Intent classification matches user input to skill/agent names  
+- Future: Skills can be invoked as tools via LLM function calling 
