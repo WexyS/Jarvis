@@ -728,9 +728,11 @@ class LLMRouter:
             if provider:
                 # Handle both BaseProvider (is_configured) and LLMProvider (is_available)
                 available = provider.is_configured() if hasattr(provider, 'is_configured') else provider.is_available()
+                # Defansif: provider.get_model_name() yoksa fallback kullan
+                model_name = provider.get_model_name() if hasattr(provider, 'get_model_name') else getattr(provider.config, 'default_model', 'unknown')
                 result[name] = {
                     "available": available,
-                    "model": provider.get_model_name(),
+                    "model": model_name,
                     "stats": {
                         "total_calls": provider.stats.total_calls,
                         "success_rate": f"{provider.stats.success_rate:.1%}",

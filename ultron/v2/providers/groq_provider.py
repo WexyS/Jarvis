@@ -89,6 +89,10 @@ class GroqProvider(BaseProvider):
     async def is_available(self) -> bool:
         return bool(self.config.api_key)
 
+    def get_model_name(self) -> str:
+        """Aktif model adını döndür"""
+        return self.config.default_model
+
     async def list_models(self) -> list[str]:
         return [
             "llama-3.3-70b-versatile",
