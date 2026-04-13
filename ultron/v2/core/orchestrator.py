@@ -288,6 +288,10 @@ class Orchestrator:
             result = await self._execute_clipboard_task(user_input, intent, lesson_context)
         elif intent.get("type") == "meeting":
             result = await self._execute_meeting_task(user_input, intent, lesson_context)
+        elif intent.get("type") == "skill":
+            result = await self._execute_skill_task(user_input, intent, lesson_context)
+        elif intent.get("type") == "agent":
+            result = await self._execute_discovered_agent_task(user_input, intent, lesson_context)
         else:
             # General chat
             result = await self._general_chat(user_input, lesson_context)
@@ -619,49 +623,29 @@ class Orchestrator:
         subtasks = intent.get("subtasks", [user_input])
         results = []
 
-        # Create tasks for each subtask
-        agent_tasks = []
-        for subtask in subtasks:
+        async def run_subtask(subtask: str):
             sub_intent = await self._classify_intent(subtask)
-            sub_type = sub_intent.get("type", "chat")
+            # Sonsuz döngüyü önlemek için intent tipi multi ise chat'e çek
+            if sub_intent.get("type") == "multi":
+                sub_intent["type"] = "chat"
+            # Tüm alt görevi doğrudan ana orkestratör pipeline'ından geçir, böylece TÜM ajanları kapsar
+            return await self.process(subtask, context={"intent": sub_intent})
 
-            if sub_type == "code":
-                agent = self.agents[AgentRole.CODER]
-            elif sub_type == "research":
-                agent = self.agents[AgentRole.RESEARCHER]
-            elif sub_type == "rpa":
-                agent = self.agents[AgentRole.RPA_OPERATOR]
+        futures = [run_subtask(task) for task in subtasks]
+        sub_results = await asyncio.gather(*futures, return_exceptions=True)
+
+        for i, res in enumerate(sub_results):
+            if isinstance(res, Exception):
+                results.append(f"[Görev {i+1} Hatası] {res}")
             else:
-                results.append(
-                    f"[Chat] {await self._general_chat(subtask, lesson_context)}"
-                )
-                continue
-
-            task = Task(description=subtask, intent=sub_type)
-            agent_tasks.append((agent, task))
-
-        # Execute in parallel
-        async def run_agent(agent, task):
-            return await agent.execute(task)
-
-        if agent_tasks:
-            futures = [run_agent(agent, task) for agent, task in agent_tasks]
-            agent_results = await asyncio.gather(*futures, return_exceptions=True)
-
-            for i, result in enumerate(agent_results):
-                if isinstance(result, Exception):
-                    results.append(f"[Error] {result}")
-                else:
-                    results.append(
-                        f"[{agent_tasks[i][0].role.value}] {result.output or result.error}"
-                    )
+                results.append(res)
 
         # Synthesize results
         if len(results) > 1:
             synthesis_messages = [
                 {
                     "role": "system",
-                    "content": "Synthesize these results from multiple agents into a coherent response.",
+                    "content": "Synthesize these results from multiple agents into a coherent response in Turkish.",
                 },
                 {
                     "role": "user",
@@ -673,6 +657,60 @@ class Orchestrator:
             return response.content
 
         return results[0] if results else "No results"
+
+    async def _execute_skill_task(self, user_input: str, intent: dict, lesson_context: str) -> str:
+        """Execute a dynamically discovered skill."""
+        skill_name = intent.get("skill")
+        skill = next((s for s in self._skills if s["name"] == skill_name), None)
+        if not skill:
+            return f"⚠️ Yetenek (Skill) '{skill_name}' bulunamadı."
+        
+        try:
+            path = Path(skill["path"])
+            if path.is_file():
+                content = path.read_text(encoding="utf-8", errors="replace")
+            else:
+                skill_md = path / "SKILL.md"
+                content = skill_md.read_text(encoding="utf-8", errors="replace") if skill_md.exists() else "Açıklama bulunamadı."
+            
+            messages = [
+                {"role": "system", "content": f"Sen '{skill_name}' isimli yeteneğe sahipsin. Aşağıdaki belgede yer alan yetenek kurallarına göre kullanıcının isteğini yerine getir:\n\n{content}"},
+                {"role": "user", "content": user_input}
+            ]
+            response = await self.llm_router.chat(messages, max_tokens=2048)
+            return response.content
+        except Exception as e:
+            logger.error("Skill execution error: %s", e)
+            return f"❌ Yetenek çalıştırılırken hata oluştu: {e}"
+
+    async def _execute_discovered_agent_task(self, user_input: str, intent: dict, lesson_context: str) -> str:
+        """Execute a dynamically discovered external agent."""
+        agent_name = intent.get("agent")
+        agent = next((a for a in self._agents_discovered if a["name"] == agent_name), None)
+        if not agent:
+            return f"⚠️ Ajan (Agent) '{agent_name}' bulunamadı."
+        
+        try:
+            path = Path(agent["path"])
+            content = ""
+            if path.is_file():
+                content = path.read_text(encoding="utf-8", errors="replace")
+            else:
+                for cfg in ["AGENT.md", "agent.json", "config.json", "README.md"]:
+                    cfg_file = path / cfg
+                    if cfg_file.exists():
+                        content = cfg_file.read_text(encoding="utf-8", errors="replace")
+                        break
+            
+            messages = [
+                {"role": "system", "content": f"Sen '{agent_name}' adlı özelleşmiş bir ajansın. Görevlerini aşağıdaki yapılandırmaya/talimatlara göre yerine getir:\n\n{content}"},
+                {"role": "user", "content": user_input}
+            ]
+            response = await self.llm_router.chat(messages, max_tokens=2048)
+            return response.content
+        except Exception as e:
+            logger.error("Agent execution error: %s", e)
+            return f"❌ Ajan çalıştırılırken hata oluştu: {e}"
 
     async def _general_chat(self, user_input: str, lesson_context: str) -> str:
         """Chat response with prompt.txt, conversation history, and lesson context."""

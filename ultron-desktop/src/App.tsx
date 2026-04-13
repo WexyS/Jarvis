@@ -53,7 +53,7 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden font-sans" style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}>
+    <div className="flex h-screen overflow-hidden font-sans bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
       {/* ── SIDEBAR (260px) - Clean, minimal ────────────────────────── */}
       <Sidebar
         status={status}
@@ -65,21 +65,17 @@ function App() {
       {/* ── MAIN CONTENT - Focus on content ─────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header - Minimal, clean like verdent.ai */}
-        <header className="flex items-center justify-between px-8 py-4 border-b" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-panel)' }}>
+        <header className="flex items-center justify-between px-8 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
           <div className="flex items-center gap-4">
             {/* Panel Toggle */}
-            <div className="flex items-center gap-2 p-1 rounded-lg" style={{ backgroundColor: 'var(--color-bg-tertiary)' }}>
+            <div className="flex items-center gap-2 p-1 rounded-lg bg-gray-200/50 dark:bg-gray-800/50">
               <button
                 onClick={() => setActivePanel('chat')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                   activePanel === 'chat'
-                    ? 'shadow-sm'
-                    : 'hover:opacity-80'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
-                style={{
-                  backgroundColor: activePanel === 'chat' ? 'var(--color-bg)' : 'transparent',
-                  color: activePanel === 'chat' ? 'var(--color-text)' : 'var(--color-text-secondary)',
-                }}
               >
                 💬 Chat
               </button>
@@ -87,13 +83,9 @@ function App() {
                 onClick={() => setActivePanel('workspace')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                   activePanel === 'workspace'
-                    ? 'shadow-sm'
-                    : 'hover:opacity-80'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
-                style={{
-                  backgroundColor: activePanel === 'workspace' ? 'var(--color-bg)' : 'transparent',
-                  color: activePanel === 'workspace' ? 'var(--color-text)' : 'var(--color-text-secondary)',
-                }}
               >
                 🌐 Workspace
               </button>
@@ -101,13 +93,9 @@ function App() {
                 onClick={() => setActivePanel('agents')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                   activePanel === 'agents'
-                    ? 'shadow-sm'
-                    : 'hover:opacity-80'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
-                style={{
-                  backgroundColor: activePanel === 'agents' ? 'var(--color-bg)' : 'transparent',
-                  color: activePanel === 'agents' ? 'var(--color-text)' : 'var(--color-text-secondary)',
-                }}
               >
                 🤖 Agents
               </button>
@@ -115,21 +103,17 @@ function App() {
                 onClick={() => setActivePanel('training')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                   activePanel === 'training'
-                    ? 'shadow-sm'
-                    : 'hover:opacity-80'
+                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                 }`}
-                style={{
-                  backgroundColor: activePanel === 'training' ? 'var(--color-bg)' : 'transparent',
-                  color: activePanel === 'training' ? 'var(--color-text)' : 'var(--color-text-secondary)',
-                }}
               >
                 🧠 Training
               </button>
             </div>
 
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4" style={{ color: 'var(--color-text-tertiary)' }} />
-              <h2 className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+              <Sparkles className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+              <h2 className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 {isStreaming ? 'Processing...' : activePanel === 'chat' ? 'Ready to assist' : activePanel === 'workspace' ? 'Workspace' : 'Agents'}
               </h2>
             </div>
@@ -139,8 +123,7 @@ function App() {
             <StatusBadge status={status} isConnected={isConnected} />
             <button
               onClick={() => setInspectorOpen(!inspectorOpen)}
-              className="p-2 rounded-lg transition-colors hover:opacity-80"
-              style={{ backgroundColor: 'var(--color-bg-tertiary)' }}
+              className="p-2 rounded-lg transition-colors hover:opacity-80 bg-gray-200/50 dark:bg-gray-800/50"
               title={inspectorOpen ? 'Close Inspector' : 'Open Inspector'}
             >
               {inspectorOpen ? <PanelRightClose className="w-5 h-5" /> : <PanelRightOpen className="w-5 h-5" />}
@@ -155,15 +138,11 @@ function App() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="mx-8 mt-4 p-4 rounded-lg border flex items-center gap-3"
-              style={{
-                backgroundColor: 'rgba(var(--color-danger), 0.1)',
-                borderColor: 'rgb(var(--color-danger))',
-              }}
+              className="mx-8 mt-4 p-4 rounded-lg border flex items-center gap-3 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
             >
-              <AlertTriangle className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--color-danger)' }} />
-              <p className="text-sm flex-1" style={{ color: 'var(--color-danger)' }}>{error}</p>
-              {!isConnected && <WifiOff className="w-4 h-4" style={{ color: 'var(--color-danger)' }} />}
+              <AlertTriangle className="w-5 h-5 flex-shrink-0 text-red-500 dark:text-red-400" />
+              <p className="text-sm flex-1 text-red-600 dark:text-red-300">{error}</p>
+              {!isConnected && <WifiOff className="w-4 h-4 text-red-500 dark:text-red-400" />}
             </motion.div>
           )}
         </AnimatePresence>
@@ -199,7 +178,7 @@ function App() {
             animate={{ width: 320, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="border-l border-[var(--color-border)] bg-[var(--color-panel)] overflow-hidden"
+            className="border-l border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 overflow-hidden"
           >
             <InspectorPanel status={status} providers={providers} workspace={workspace} />
           </motion.div>
@@ -209,7 +188,7 @@ function App() {
       {/* ── THEME TOGGLE BUTTON ─────────────────────────────────────── */}
       <motion.button
         onClick={toggleTheme}
-        className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-[var(--color-panel)] border border-[var(--color-border)] shadow-lg hover:scale-110 transition-transform"
+        className="fixed bottom-4 right-4 z-50 p-3 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg hover:scale-110 transition-transform"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
@@ -223,7 +202,7 @@ function App() {
               exit={{ rotate: 90, opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              <Moon className="w-5 h-5 text-[var(--color-text)]" />
+              <Moon className="w-5 h-5 text-gray-800 dark:text-gray-200" />
             </motion.div>
           ) : (
             <motion.div
@@ -233,7 +212,7 @@ function App() {
               exit={{ rotate: -90, opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              <Sun className="w-5 h-5 text-[var(--color-text)]" />
+              <Sun className="w-5 h-5 text-gray-800 dark:text-gray-200" />
             </motion.div>
           )}
         </AnimatePresence>
