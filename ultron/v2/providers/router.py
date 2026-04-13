@@ -7,24 +7,26 @@ from ultron.v2.providers.fallback_chain import FallbackChain
 
 # Görev tipi → provider öncelik sırası
 TASK_ROUTES = {
-    "fast": ["groq", "ollama", "cloudflare", "together"],
+    "fast": ["groq", "minimax", "ollama", "cloudflare", "together"],
     "code": ["ollama", "openrouter", "groq", "together"],
     "long": ["gemini", "openrouter", "ollama"],
     "cheap": ["ollama", "cloudflare", "hf", "groq"],
     "creative": ["openrouter", "ollama", "gemini"],
     "search": ["openrouter", "gemini", "groq"],
-    "deep_analysis": ["airllm_405b", "ollama", "openrouter"],  # YENİ: 405B için
-    "sleep_mode": ["airllm_405b"],  # YENİ: Uyku modu
+    "self_evolve": ["minimax", "ollama", "openrouter"],  # YENİ: MiniMax M2.7 için
+    "deep_analysis": ["airllm_405b", "ollama", "openrouter"],
+    "sleep_mode": ["airllm_405b"],
     "default": [
         "ollama",
         "groq",
+        "minimax",  # YENİ: MiniMax M2.7
         "openrouter",
         "gemini",
         "cloudflare",
         "together",
         "hf",
         "openai",
-        "airllm_405b",  # YENİ: 405B fallback olarak
+        "airllm_405b",
     ],
 }
 
@@ -43,11 +45,13 @@ class ProviderRouter:
         from ultron.v2.providers.together_provider import TogetherProvider
         from ultron.v2.providers.hf_provider import HFProvider
         from ultron.v2.providers.openai_provider import OpenAIProvider
+        from ultron.v2.providers.minimax_provider import MiniMaxProvider
         from ultron.v2.providers.airllm_provider import create_provider as create_airllm
 
         for cls in [
             OllamaProvider,
             GroqProvider,
+            MiniMaxProvider,
             OpenRouterProvider,
             GeminiProvider,
             CloudflareProvider,
