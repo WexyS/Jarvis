@@ -54,7 +54,8 @@ def run(parameters: dict, **kwargs) -> str:
             "Sen kıdemli bir yazılım mühendisisin (Gemini). "
             "Ultron (Qwen) adlı yerel bir AI asistanı sana danışıyor. "
             "SADECE düzeltilmiş kodu ver. Kısa açıklama + kod bloğu formatında yanıt ver. "
-            "Dosya yolu belirtilmişse, o dosyayı nasıl düzenleyeceğini adım adım göster."
+            "Dosya yolu belirtilmişse, o dosyayı nasıl düzenleyeceğini adım adım göster. "
+            "DİKKAT: Projede klasör karmaşası yaratmamaya özen göster (örn: core/providers yerine projenin ana sağlayıcı dizinlerini hedef al, duplicate yaratma)."
         )
     else:  # consult
         system_prompt = (

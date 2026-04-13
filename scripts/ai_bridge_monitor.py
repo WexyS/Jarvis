@@ -181,7 +181,8 @@ class BridgeMonitor:
             "ÖNEMLİ KURALLAR:\n"
             "1. Asla 'İsteği aldım, çalışıyorum' gibi sekreter yanıtları verme. İŞİ DOĞRUDAN YAP VE KODU VER.\n"
             "2. Eğer bir dosyayı düzenlemen/oluşturman gerekiyorsa, yanıtının en başına `[FILE: dosya/yolu.py]` yaz ve kodu ```python ... ``` blokları içinde tam olarak ver.\n"
-            "3. Yanıtın doğrudan sisteme entegre edilecek, bu yüzden sadece gerekli kodu ve kısa bir açıklama yaz."
+            "3. KOD ÇAKIŞMASINI ÖNLE: Yeni bir dosya oluşturmadan veya değiştirmeden önce projenin mevcut dizin yapısını düşün (örn: providers klasörü varken core/providers içine aynı dosyayı kopyalama).\n"
+            "4. Yanıtın doğrudan sisteme entegre edilecek, bu yüzden sadece gerekli kodu ve kısa bir açıklama yaz."
         )
         
         import requests
