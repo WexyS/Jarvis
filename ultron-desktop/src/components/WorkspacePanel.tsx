@@ -150,22 +150,26 @@ export default function WorkspacePanel() {
   };
 
   return (
-    <div className="workspace-panel bg-white">
+    <div className="workspace-panel flex-1 overflow-y-auto p-6" style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Workspace</h1>
-        <p className="text-gray-600">Clone websites, generate apps, or synthesize new projects from templates</p>
+        <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Workspace</h1>
+        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Clone websites, generate apps, or synthesize new projects from templates</p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex items-center gap-2 mb-6 p-1 bg-gray-100 rounded-lg w-fit">
+      <div className="flex items-center gap-2 mb-6 p-1 rounded-lg w-fit" style={{ backgroundColor: 'var(--color-bg-tertiary)' }}>
         <button
           onClick={() => setActiveTab('clone')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all ${
             activeTab === 'clone'
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'shadow-sm'
+              : 'hover:opacity-80'
           }`}
+          style={{
+            backgroundColor: activeTab === 'clone' ? 'var(--color-bg)' : 'transparent',
+            color: activeTab === 'clone' ? 'var(--color-text)' : 'var(--color-text-secondary)',
+          }}
         >
           <Globe className="w-4 h-4" />
           Clone Site
@@ -174,9 +178,13 @@ export default function WorkspacePanel() {
           onClick={() => setActiveTab('generate')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all ${
             activeTab === 'generate'
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'shadow-sm'
+              : 'hover:opacity-80'
           }`}
+          style={{
+            backgroundColor: activeTab === 'generate' ? 'var(--color-bg)' : 'transparent',
+            color: activeTab === 'generate' ? 'var(--color-text)' : 'var(--color-text-secondary)',
+          }}
         >
           <Code className="w-4 h-4" />
           Generate App
@@ -185,9 +193,13 @@ export default function WorkspacePanel() {
           onClick={() => setActiveTab('synthesize')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all ${
             activeTab === 'synthesize'
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'shadow-sm'
+              : 'hover:opacity-80'
           }`}
+          style={{
+            backgroundColor: activeTab === 'synthesize' ? 'var(--color-bg)' : 'transparent',
+            color: activeTab === 'synthesize' ? 'var(--color-text)' : 'var(--color-text-secondary)',
+          }}
         >
           <Layers className="w-4 h-4" />
           Synthesize
@@ -203,9 +215,9 @@ export default function WorkspacePanel() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
-            <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
-              <h3 className="text-lg font-semibold mb-3">Clone a Website</h3>
-              <p className="text-sm text-gray-600 mb-4">
+            <div className="p-6 rounded-xl border" style={{ backgroundColor: 'var(--color-bg-secondary)', borderColor: 'var(--color-border)' }}>
+              <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Clone a Website</h3>
+              <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
                 Enter a URL to clone the website. Playwright will render it, extract components, and save the structure.
               </p>
               <div className="flex gap-3">
@@ -214,13 +226,21 @@ export default function WorkspacePanel() {
                   value={cloneUrl}
                   onChange={(e) => setCloneUrl(e.target.value)}
                   placeholder="https://example.com"
-                  className="flex-1"
+                  className="flex-1 rounded-lg border px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent"
+                  style={{
+                    backgroundColor: 'var(--color-bg)',
+                    borderColor: 'var(--color-border)',
+                    color: 'var(--color-text)',
+                  }}
                   disabled={loading}
                 />
                 <button
                   onClick={handleClone}
                   disabled={loading || !cloneUrl.trim()}
-                  className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-medium rounded-lg transition-all disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-6 py-2.5 font-medium rounded-lg transition-all disabled:cursor-not-allowed flex items-center gap-2 text-white"
+                  style={{
+                    backgroundColor: loading || !cloneUrl.trim() ? 'var(--color-border)' : 'var(--color-accent)',
+                  }}
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
                   {loading ? 'Cloning...' : 'Clone'}
@@ -230,20 +250,20 @@ export default function WorkspacePanel() {
 
             {/* Features */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="p-4 bg-white border border-gray-200 rounded-lg">
-                <Globe className="w-6 h-6 text-blue-600 mb-2" />
-                <h4 className="font-medium mb-1">Full Rendering</h4>
-                <p className="text-xs text-gray-600">Playwright renders JS-heavy sites</p>
+              <div className="p-4 border rounded-lg" style={{ backgroundColor: 'var(--color-card)', borderColor: 'var(--color-border)' }}>
+                <Globe className="w-6 h-6 mb-2" style={{ color: 'var(--color-accent)' }} />
+                <h4 className="font-medium mb-1" style={{ color: 'var(--color-text)' }}>Full Rendering</h4>
+                <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Playwright renders JS-heavy sites</p>
               </div>
-              <div className="p-4 bg-white border border-gray-200 rounded-lg">
-                <Layers className="w-6 h-6 text-purple-600 mb-2" />
-                <h4 className="font-medium mb-1">Component Extraction</h4>
-                <p className="text-xs text-gray-600">Detects navbar, hero, cards, etc.</p>
+              <div className="p-4 border rounded-lg" style={{ backgroundColor: 'var(--color-card)', borderColor: 'var(--color-border)' }}>
+                <Layers className="w-6 h-6 mb-2" style={{ color: '#a855f7' }} />
+                <h4 className="font-medium mb-1" style={{ color: 'var(--color-text)' }}>Component Extraction</h4>
+                <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Detects navbar, hero, cards, etc.</p>
               </div>
-              <div className="p-4 bg-white border border-gray-200 rounded-lg">
-                <FolderOpen className="w-6 h-6 text-green-600 mb-2" />
-                <h4 className="font-medium mb-1">Saved Structure</h4>
-                <p className="text-xs text-gray-600">Metadata and components stored</p>
+              <div className="p-4 border rounded-lg" style={{ backgroundColor: 'var(--color-card)', borderColor: 'var(--color-border)' }}>
+                <FolderOpen className="w-6 h-6 mb-2" style={{ color: 'var(--color-success)' }} />
+                <h4 className="font-medium mb-1" style={{ color: 'var(--color-text)' }}>Saved Structure</h4>
+                <p className="text-xs" style={{ color: 'var(--color-text-secondary)' }}>Metadata and components stored</p>
               </div>
             </div>
           </motion.div>
@@ -256,9 +276,9 @@ export default function WorkspacePanel() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
-            <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
-              <h3 className="text-lg font-semibold mb-3">Generate an App from Idea</h3>
-              <p className="text-sm text-gray-600 mb-4">
+            <div className="p-6 rounded-xl border" style={{ backgroundColor: 'var(--color-bg-secondary)', borderColor: 'var(--color-border)' }}>
+              <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Generate an App from Idea</h3>
+              <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
                 Describe your app idea and AI will generate a complete, working application.
               </p>
               <textarea
@@ -266,13 +286,21 @@ export default function WorkspacePanel() {
                 onChange={(e) => setGenerateIdea(e.target.value)}
                 placeholder="A todo list application with dark mode and local storage..."
                 rows={3}
-                className="w-full mb-4"
+                className="w-full mb-4 rounded-lg border px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent"
+                style={{
+                  backgroundColor: 'var(--color-bg)',
+                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-text)',
+                }}
                 disabled={loading}
               />
               <button
                 onClick={handleGenerate}
                 disabled={loading || !generateIdea.trim()}
-                className="w-full px-6 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 text-white font-medium rounded-lg transition-all disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full px-6 py-2.5 font-medium rounded-lg transition-all disabled:cursor-not-allowed flex items-center justify-center gap-2 text-white"
+                style={{
+                  backgroundColor: loading || !generateIdea.trim() ? 'var(--color-border)' : '#9333ea',
+                }}
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Code className="w-4 h-4" />}
                 {loading ? 'Generating...' : 'Generate App'}
@@ -280,9 +308,9 @@ export default function WorkspacePanel() {
             </div>
 
             {/* Tips */}
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 className="font-medium text-blue-900 mb-2">💡 Tips for better results:</h4>
-              <ul className="text-sm text-blue-800 space-y-1">
+            <div className="p-4 border rounded-lg" style={{ backgroundColor: 'rgba(var(--color-accent), 0.1)', borderColor: 'rgb(var(--color-accent))' }}>
+              <h4 className="font-medium mb-2" style={{ color: 'var(--color-accent)' }}>💡 Tips for better results:</h4>
+              <ul className="text-sm space-y-1" style={{ color: 'var(--color-accent)' }}>
                 <li>• Be specific about features</li>
                 <li>• Mention the tech stack you prefer</li>
                 <li>• Include design preferences</li>
@@ -298,9 +326,9 @@ export default function WorkspacePanel() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
-            <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
-              <h3 className="text-lg font-semibold mb-3">Synthesize from Templates</h3>
-              <p className="text-sm text-gray-600 mb-4">
+            <div className="p-6 rounded-xl border" style={{ backgroundColor: 'var(--color-bg-secondary)', borderColor: 'var(--color-border)' }}>
+              <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-text)' }}>Synthesize from Templates</h3>
+              <p className="text-sm mb-4" style={{ color: 'var(--color-text-secondary)' }}>
                 Combine existing cloned templates to create a new application using RAG.
               </p>
               <textarea
@@ -308,13 +336,21 @@ export default function WorkspacePanel() {
                 onChange={(e) => setSynthesizeCommand(e.target.value)}
                 placeholder="Create a dashboard with the navbar from site A and the cards from site B..."
                 rows={3}
-                className="w-full mb-4"
+                className="w-full mb-4 rounded-lg border px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent"
+                style={{
+                  backgroundColor: 'var(--color-bg)',
+                  borderColor: 'var(--color-border)',
+                  color: 'var(--color-text)',
+                }}
                 disabled={loading}
               />
               <button
                 onClick={handleSynthesize}
                 disabled={loading || !synthesizeCommand.trim()}
-                className="w-full px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 text-white font-medium rounded-lg transition-all disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full px-6 py-2.5 font-medium rounded-lg transition-all disabled:cursor-not-allowed flex items-center justify-center gap-2 text-white"
+                style={{
+                  backgroundColor: loading || !synthesizeCommand.trim() ? 'var(--color-border)' : '#4f46e5',
+                }}
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Layers className="w-4 h-4" />}
                 {loading ? 'Synthesizing...' : 'Synthesize'}
@@ -330,10 +366,11 @@ export default function WorkspacePanel() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3"
+              className="p-4 border rounded-lg flex items-center gap-3"
+              style={{ backgroundColor: 'rgba(var(--color-success), 0.1)', borderColor: 'rgb(var(--color-success))' }}
             >
-              <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-              <p className="text-sm text-green-800 flex-1">{result}</p>
+              <CheckCircle className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--color-success)' }} />
+              <p className="text-sm flex-1" style={{ color: 'var(--color-success)' }}>{result}</p>
             </motion.div>
           )}
 
@@ -342,10 +379,11 @@ export default function WorkspacePanel() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3"
+              className="p-4 border rounded-lg flex items-center gap-3"
+              style={{ backgroundColor: 'rgba(var(--color-danger), 0.1)', borderColor: 'rgb(var(--color-danger))' }}
             >
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-              <p className="text-sm text-red-800 flex-1">{error}</p>
+              <AlertCircle className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--color-danger)' }} />
+              <p className="text-sm flex-1" style={{ color: 'var(--color-danger)' }}>{error}</p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -353,36 +391,38 @@ export default function WorkspacePanel() {
         {/* Workspace Items */}
         {workspace.length > 0 && (
           <div className="mt-8">
-            <h3 className="text-lg font-semibold mb-4">Recent Projects ({workspace.length})</h3>
+            <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--color-text)' }}>Recent Projects ({workspace.length})</h3>
             <div className="space-y-3">
               {workspace.slice(0, 10).map((item) => (
                 <div
                   key={item.id}
-                  className="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                  className="p-4 border rounded-lg hover:shadow-md transition-shadow"
+                  style={{ backgroundColor: 'var(--color-card)', borderColor: 'var(--color-border)' }}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">
                         {item.type === 'clone' ? '🌐' : item.type === 'generated' ? '💻' : '🔄'}
                       </span>
-                      <h4 className="font-medium">{item.name}</h4>
+                      <h4 className="font-medium" style={{ color: 'var(--color-text)' }}>{item.name}</h4>
                     </div>
                     <button
                       onClick={() => openInExplorer(item.path)}
-                      className="p-1 hover:bg-gray-100 rounded"
+                      className="p-1 rounded transition-colors hover:opacity-80"
+                      style={{ backgroundColor: 'var(--color-bg-tertiary)' }}
                       title="Open in Explorer"
                     >
-                      <ExternalLink className="w-4 h-4 text-gray-600" />
+                      <ExternalLink className="w-4 h-4" style={{ color: 'var(--color-text-secondary)' }} />
                     </button>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">{item.description}</p>
+                  <p className="text-sm mb-2" style={{ color: 'var(--color-text-secondary)' }}>{item.description}</p>
                   <div className="flex items-center gap-2 flex-wrap">
                     {item.components.slice(0, 5).map((comp) => (
-                      <span key={comp} className="px-2 py-0.5 text-xs bg-gray-100 rounded">
+                      <span key={comp} className="px-2 py-0.5 text-xs rounded" style={{ backgroundColor: 'var(--color-bg-tertiary)', color: 'var(--color-text-secondary)' }}>
                         {comp}
                       </span>
                     ))}
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>
                       {new Date(item.created_at).toLocaleDateString()}
                     </span>
                   </div>

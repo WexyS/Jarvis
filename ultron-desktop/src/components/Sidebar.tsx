@@ -11,16 +11,16 @@ interface SidebarProps {
 
 export default function Sidebar({ status, onClear, activePanel, onPanelChange }: SidebarProps) {
   return (
-    <div className="w-64 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col">
+    <div className="w-64 border-r flex flex-col" style={{ backgroundColor: 'var(--color-panel)', borderColor: 'var(--color-border)' }}>
       {/* Logo / Brand */}
-      <div className="px-6 py-5 border-b border-gray-200 dark:border-slate-700">
+      <div className="px-6 py-5 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgb(var(--color-accent)), #4f46e5)' }}>
             <Zap className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-gray-900 dark:text-white">Ultron</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">AI Assistant v2.1</p>
+            <h1 className="text-lg font-bold" style={{ color: 'var(--color-text)' }}>Ultron</h1>
+            <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>AI Assistant v2.1</p>
           </div>
         </div>
       </div>
@@ -31,9 +31,13 @@ export default function Sidebar({ status, onClear, activePanel, onPanelChange }:
           onClick={() => onPanelChange('chat')}
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
             activePanel === 'chat'
-              ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
+              ? 'shadow-sm'
+              : 'hover:opacity-80'
           }`}
+          style={{
+            backgroundColor: activePanel === 'chat' ? 'rgba(var(--color-accent), 0.1)' : 'transparent',
+            color: activePanel === 'chat' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+          }}
         >
           <MessageSquare className="w-5 h-5" />
           <span className="font-medium">Chat</span>
@@ -43,9 +47,13 @@ export default function Sidebar({ status, onClear, activePanel, onPanelChange }:
           onClick={() => onPanelChange('workspace')}
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
             activePanel === 'workspace'
-              ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
+              ? 'shadow-sm'
+              : 'hover:opacity-80'
           }`}
+          style={{
+            backgroundColor: activePanel === 'workspace' ? 'rgba(var(--color-accent), 0.1)' : 'transparent',
+            color: activePanel === 'workspace' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+          }}
         >
           <Globe className="w-5 h-5" />
           <span className="font-medium">Workspace</span>
@@ -55,9 +63,13 @@ export default function Sidebar({ status, onClear, activePanel, onPanelChange }:
           onClick={() => onPanelChange('agents')}
           className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
             activePanel === 'agents'
-              ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700'
+              ? 'shadow-sm'
+              : 'hover:opacity-80'
           }`}
+          style={{
+            backgroundColor: activePanel === 'agents' ? 'rgba(var(--color-accent), 0.1)' : 'transparent',
+            color: activePanel === 'agents' ? 'var(--color-accent)' : 'var(--color-text-secondary)',
+          }}
         >
           <Bot className="w-5 h-5" />
           <span className="font-medium">Agents</span>
@@ -65,24 +77,28 @@ export default function Sidebar({ status, onClear, activePanel, onPanelChange }:
       </nav>
 
       {/* Status */}
-      <div className="px-3 py-4 border-t border-gray-200 dark:border-slate-700">
-        <div className="px-3 py-2 bg-gray-50 dark:bg-slate-700 rounded-lg">
-          <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Status</p>
-          <p className="text-sm font-medium text-gray-900 dark:text-white capitalize">{status}</p>
+      <div className="px-3 py-4 border-t" style={{ borderColor: 'var(--color-border)' }}>
+        <div className="px-3 py-2 rounded-lg" style={{ backgroundColor: 'var(--color-bg-tertiary)' }}>
+          <p className="text-xs mb-1" style={{ color: 'var(--color-text-secondary)' }}>Status</p>
+          <p className="text-sm font-medium capitalize" style={{ color: 'var(--color-text)' }}>{status || 'Ready'}</p>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="px-3 py-4 border-t border-gray-200 dark:border-slate-700 space-y-2">
+      <div className="px-3 py-4 border-t space-y-2" style={{ borderColor: 'var(--color-border)' }}>
         <button
           onClick={onClear}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all hover:opacity-80"
+          style={{ color: 'var(--color-text-secondary)' }}
         >
           <Trash2 className="w-5 h-5" />
           <span className="font-medium">Clear Chat</span>
         </button>
 
-        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all">
+        <button
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all hover:opacity-80"
+          style={{ color: 'var(--color-text-secondary)' }}
+        >
           <Settings className="w-5 h-5" />
           <span className="font-medium">Settings</span>
         </button>

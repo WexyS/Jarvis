@@ -9,7 +9,7 @@ export default function StatusBadge({ status, isConnected }: StatusBadgeProps) {
   if (!status) {
     return (
       <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-ultron-panel border border-ultron-border">
-        <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+        <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-warning)' }} />
         <span className="text-xs text-ultron-textMuted">Connecting...</span>
       </div>
     );

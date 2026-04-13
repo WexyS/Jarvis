@@ -11,10 +11,10 @@ interface InputBoxProps {
 }
 
 const MODES: { key: Mode; label: string; icon: React.ReactNode; color: string }[] = [
-  { key: 'chat', label: 'Chat', icon: <Send className="w-4 h-4" />, color: 'bg-ultron-primary' },
-  { key: 'code', label: 'Code', icon: <Code className="w-4 h-4" />, color: 'bg-purple-500' },
-  { key: 'research', label: 'Research', icon: <Search className="w-4 h-4" />, color: 'bg-blue-500' },
-  { key: 'rpa', label: 'RPA', icon: <Monitor className="w-4 h-4" />, color: 'bg-orange-500' },
+  { key: 'chat', label: 'Chat', icon: <Send className="w-4 h-4" />, color: 'var(--color-accent)' },
+  { key: 'code', label: 'Code', icon: <Code className="w-4 h-4" />, color: '#a855f7' },
+  { key: 'research', label: 'Research', icon: <Search className="w-4 h-4" />, color: '#3b82f6' },
+  { key: 'rpa', label: 'RPA', icon: <Monitor className="w-4 h-4" />, color: '#f97316' },
 ];
 
 export default function InputBox({ onSend, disabled, isConnected }: InputBoxProps) {

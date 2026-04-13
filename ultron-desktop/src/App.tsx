@@ -52,7 +52,7 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 font-sans overflow-hidden">
+    <div className="flex h-screen overflow-hidden font-sans" style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}>
       {/* ── SIDEBAR (260px) - Clean, minimal ────────────────────────── */}
       <Sidebar
         status={status}
@@ -64,17 +64,21 @@ function App() {
       {/* ── MAIN CONTENT - Focus on content ─────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header - Minimal, clean like verdent.ai */}
-        <header className="flex items-center justify-between px-8 py-4 border-b border-gray-200 bg-white">
+        <header className="flex items-center justify-between px-8 py-4 border-b" style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-panel)' }}>
           <div className="flex items-center gap-4">
             {/* Panel Toggle */}
-            <div className="flex items-center gap-2 p-1 bg-gray-100 rounded-lg">
+            <div className="flex items-center gap-2 p-1 rounded-lg" style={{ backgroundColor: 'var(--color-bg-tertiary)' }}>
               <button
                 onClick={() => setActivePanel('chat')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                   activePanel === 'chat'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'shadow-sm'
+                    : 'hover:opacity-80'
                 }`}
+                style={{
+                  backgroundColor: activePanel === 'chat' ? 'var(--color-bg)' : 'transparent',
+                  color: activePanel === 'chat' ? 'var(--color-text)' : 'var(--color-text-secondary)',
+                }}
               >
                 💬 Chat
               </button>
@@ -82,18 +86,36 @@ function App() {
                 onClick={() => setActivePanel('workspace')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                   activePanel === 'workspace'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'shadow-sm'
+                    : 'hover:opacity-80'
                 }`}
+                style={{
+                  backgroundColor: activePanel === 'workspace' ? 'var(--color-bg)' : 'transparent',
+                  color: activePanel === 'workspace' ? 'var(--color-text)' : 'var(--color-text-secondary)',
+                }}
               >
                 🌐 Workspace
+              </button>
+              <button
+                onClick={() => setActivePanel('agents')}
+                className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                  activePanel === 'agents'
+                    ? 'shadow-sm'
+                    : 'hover:opacity-80'
+                }`}
+                style={{
+                  backgroundColor: activePanel === 'agents' ? 'var(--color-bg)' : 'transparent',
+                  color: activePanel === 'agents' ? 'var(--color-text)' : 'var(--color-text-secondary)',
+                }}
+              >
+                🤖 Agents
               </button>
             </div>
 
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-gray-400" />
-              <h2 className="text-sm font-medium text-gray-600">
-                {isStreaming ? 'Processing...' : activePanel === 'chat' ? 'Ready to assist' : 'Workspace'}
+              <Sparkles className="w-4 h-4" style={{ color: 'var(--color-text-tertiary)' }} />
+              <h2 className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>
+                {isStreaming ? 'Processing...' : activePanel === 'chat' ? 'Ready to assist' : activePanel === 'workspace' ? 'Workspace' : 'Agents'}
               </h2>
             </div>
           </div>
@@ -102,7 +124,8 @@ function App() {
             <StatusBadge status={status} isConnected={isConnected} />
             <button
               onClick={() => setInspectorOpen(!inspectorOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-lg transition-colors hover:opacity-80"
+              style={{ backgroundColor: 'var(--color-bg-tertiary)' }}
               title={inspectorOpen ? 'Close Inspector' : 'Open Inspector'}
             >
               {inspectorOpen ? <PanelRightClose className="w-5 h-5" /> : <PanelRightOpen className="w-5 h-5" />}
@@ -117,11 +140,15 @@ function App() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="mx-8 mt-4 p-4 rounded-lg bg-red-50 border border-red-200 flex items-center gap-3"
+              className="mx-8 mt-4 p-4 rounded-lg border flex items-center gap-3"
+              style={{
+                backgroundColor: 'rgba(var(--color-danger), 0.1)',
+                borderColor: 'rgb(var(--color-danger))',
+              }}
             >
-              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
-              <p className="text-sm text-red-700 flex-1">{error}</p>
-              {!isConnected && <WifiOff className="w-4 h-4 text-red-600" />}
+              <AlertTriangle className="w-5 h-5 flex-shrink-0" style={{ color: 'var(--color-danger)' }} />
+              <p className="text-sm flex-1" style={{ color: 'var(--color-danger)' }}>{error}</p>
+              {!isConnected && <WifiOff className="w-4 h-4" style={{ color: 'var(--color-danger)' }} />}
             </motion.div>
           )}
         </AnimatePresence>

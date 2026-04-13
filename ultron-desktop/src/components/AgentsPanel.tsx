@@ -16,14 +16,14 @@ const agents: AgentInfo[] = [
     icon: <Code className="w-5 h-5" />,
     status: 'ready',
     description: 'Writes, debugs, and executes code with auto-healing',
-    color: 'bg-purple-500',
+    color: '#a855f7',
   },
   {
     name: 'Researcher Agent',
     icon: <Search className="w-5 h-5" />,
     status: 'ready',
     description: 'Multi-hop web research with citation synthesis',
-    color: 'bg-blue-500',
+    color: '#3b82f6',
   },
   {
     name: 'RPA Operator',
@@ -37,21 +37,21 @@ const agents: AgentInfo[] = [
     icon: <Mail className="w-5 h-5" />,
     status: 'ready',
     description: 'IMAP/SMTP inbox reading and smart summarization',
-    color: 'bg-green-500',
+    color: '#10b981',
   },
   {
     name: 'System Monitor',
     icon: <Activity className="w-5 h-5" />,
     status: 'ready',
     description: 'Real-time CPU/RAM/disk monitoring with alerts',
-    color: 'bg-red-500',
+    color: '#ef4444',
   },
   {
     name: 'Clipboard Agent',
     icon: <Clipboard className="w-5 h-5" />,
     status: 'ready',
     description: 'Auto-detects and processes clipboard content',
-    color: 'bg-yellow-500',
+    color: '#f59e0b',
   },
   {
     name: 'Meeting Agent',
@@ -125,16 +125,16 @@ export default function AgentsPanel() {
                     <div className="flex items-center gap-1.5">
                       {agent.status === 'ready' ? (
                         <>
-                          <CheckCircle className="w-4 h-4 text-green-500" />
-                          <span className="text-xs text-green-600 dark:text-green-400 font-medium">Ready</span>
+                          <CheckCircle className="w-4 h-4" style={{ color: 'var(--color-success)' }} />
+                          <span className="text-xs font-medium" style={{ color: 'var(--color-success)' }}>Ready</span>
                         </>
                       ) : agent.status === 'busy' ? (
                         <>
-                          <AlertCircle className="w-4 h-4 text-yellow-500" />
-                          <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">Busy</span>
+                          <AlertCircle className="w-4 h-4" style={{ color: 'var(--color-warning)' }} />
+                          <span className="text-xs font-medium" style={{ color: 'var(--color-warning)' }}>Busy</span>
                         </>
                       ) : (
-                        <span className="text-xs text-gray-400">Offline</span>
+                        <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>Offline</span>
                       )}
                     </div>
                   </div>
@@ -184,7 +184,7 @@ export default function AgentsPanel() {
               <p className="text-xs text-[var(--color-text-secondary)]">Total Agents</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-green-600">10</p>
+              <p className="text-2xl font-bold" style={{ color: 'var(--color-success)' }}>10</p>
               <p className="text-xs text-[var(--color-text-secondary)]">Active</p>
             </div>
             <div>
