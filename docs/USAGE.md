@@ -1,329 +1,472 @@
-# Ultron v2.0 — Kullanım Kılavuzu
+# Ultron v2.1 — Usage Guide
 
-> **Son güncelleme:** 11 Nisan 2026
-> **Model:** Qwen 2.5 14B (yerel) + Claude Sonnet 4 (OpenRouter, ücretsiz)
-> **Mimari:** Multi-Agent (Coder, Researcher, RPA) + Voice Pipeline + GUI
+> **Last updated:** April 13, 2026  
+> **Model:** Qwen 2.5 14B (local) + 12 cloud fallbacks  
+> **Architecture:** Multi-Agent (8 agents) + Voice Pipeline + 3-Panel GUI
 
 ---
 
-## Hızlı Başlangıç
+## Quick Start
+
+### Prerequisites
+
+| Requirement | Version | Purpose |
+|-------------|---------|---------|
+| **Python** | 3.10+ | Backend runtime |
+| **Node.js** | 18+ | GUI build toolchain |
+| **Ollama** | Latest | Local LLM runtime |
+
+### One-Command Launch (Windows)
 
 ```bash
-cd C:\Users\nemes\Desktop\Ultron
-python -m ultron.cli
+# Double-click or run:
+start-ultron-desktop.bat
 ```
 
-Animasyonlu Mark-XXXX   GUI açılır. Hem **sesli** hem **yazılı** iletişim kurabilirsin.
+The script automatically:
+1. ✅ Activates the virtual environment
+2. 🚀 Starts the FastAPI backend (`:8000`)
+3. ⏳ Waits for health check (auto-retry loop)
+4. 🎨 Launches the React frontend (`:5173`)
 
----
-
-## 🖥️ GUI Kullanımı
-
-```
-┌────────────────────────────────────────────────────────┐
-│  Ultron         Qwen 2.5 14B + Claude            │
-│  Just A Rather Very Intelligent System                 │
-├────────────────────────────────────────────────────────┤
-│          ╭──────────────────────────────╮              │
-│          │     Animasyonlu Orb           │              │
-│          │  (dönen halkalar, pulse)      │              │
-│          ╰──────────────────────────────╯              │
-│                                                        │
-│  ● DİNLİYOR                                            │
-│  ▂▃▅▆▇▆▅▃▂▁▂▃▅▆▇▆▅▃▂▁   (ses dalgası)                │
-│                                                        │
-├────────────────────────────────────────────────────────┤
-│  Log alanı:                                            │
-│  You: /code hackernews başlıklarını JSON kaydet       │
-│  Ultron: [Python kodu yazıldı, çalıştırıldı]           │
-├────────────────────────────────────────────────────────┤
-│  [Bir mesaj yazın...]        [GÖNDER ▸]                │
-│  [🎙 LIVE]                        [F4] SUSTUR           │
-└────────────────────────────────────────────────────────┘
-```
-
-### Durum Göstergeleri
-
-| Gösterge | Anlamı |
-|----------|--------|
-| `● DİNLİYOR` | Mikrofon açık, ses bekleniyor |
-| `⟳ YAZIYA ÇEVRİLİYOR` | Ses → metin (STT) |
-| `◈ DÜŞÜNÜYOR` | LLM yanıt üretiyor |
-| `● KONUŞUYOR` | TTS sesli okuyor |
-| `⊘ SUSTURULDU` | Mikrofon kapalı |
-
-### Kontroller
-
-| Kontrol | İşlev |
-|---------|-------|
-| **🎙 LIVE / 🔇 MUTED** | Mikrofon aç/kapat |
-| **F4** | Mikrofon sustur/aç (klavye kısayolu) |
-| **Metin kutusu + GÖNDER** | Yazarak soru sor / komut ver |
-| **X butonu** | Uygulamayı kapat |
-
----
-
-## 🚀 Optimizasyonlar
-
-| Optimizasyon | Önceki | Sonraki | Kazanım |
-|--------------|--------|---------|---------|
-| **GUI Frame Rate** | 60fps | 30fps | CPU/GPU %50 azaldı |
-| **LLM num_ctx** | 2048 | 1024 | VRAM %50 azaldı |
-| **LLM num_predict** | 4096 | 1024 | Yanıt süresi %60 kısaldı |
-| **Mirostat sampling** | Kapalı | Açık | Kalite arttı, tutarsızlık azaldı |
-| **Lazy loading** | Eager | Arka plan thread | GUI anında açılıyor |
-| **Context window** | 8 mesaj | 6 mesaj | Memory %25 azaldı |
-| **Timeout** | 180s | 120s | Hızlı hata bildirimi |
-| **num_gpu** | Auto | 999 | Tüm model GPU'da |
-
-### Sistem Kaynakları
-
-| Bileşen | RAM | VRAM | CPU |
-|---------|-----|------|-----|
-| **GUI (idle)** | ~50MB | ~20MB | ~2% |
-| **Voice Pipeline** | ~500MB | ~1GB | ~5% |
-| **qwen2.5:14b** | ~2GB | ~9GB | ~10% |
-| **Toplam** | ~2.5GB | ~10GB | ~17% |
-
----
-
-GUI'den bağımsız, daha güçlü mod:
+### Manual Setup
 
 ```bash
-python -m ultron.v2.bootstrap
-```
+# 1. Create & activate virtual environment
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+source .venv/bin/activate       # macOS/Linux
 
-### Komut Prefixleri
+# 2. Install dependencies
+pip install -e ".[dev]"
 
-| Prefix | Agent | Ne Yapar |
-|--------|-------|----------|
-| `/code <görev>` | **Coder** (qwen2.5-coder:7b) | Kod yazar, **çalıştırır**, hata varsa **kendi düzeltir** |
-| `/research <konu>` | **Researcher** (qwen2.5:14b) | Web araması + içerik okuma + sentez |
-| `/rpa <görev>` | **RPA Operator** | Ekran görüntüsü, OCR, mouse/klavye kontrolü |
-| `/status` | — | Tüm sistem durumunu göster |
-| `/quit` | — | Çıkış |
+# 3. Install Playwright Chromium (for workspace cloning)
+playwright install chromium
 
-### Örnek Kullanım
+# 4. Install & run Ollama
+ollama pull qwen2.5:14b          # Download model
+ollama serve                     # Start server
 
-```
-You> /code Write a Python script that fetches titles from https://news.ycombinator.com/ and saves them to hn_titles.json
-Ultron processing...
-→ Kod yazıldı: workspace/task_xxxxxxxx.py
-→ Çalıştırıldı: Başarılı
-→ Çıktı: Titles saved to hn_titles.json
+# 5. Start backend
+python -m uvicorn ultron.api.main:app --host 127.0.0.1 --port 8000
 
-You> /research What are the latest developments in quantum computing?
-Ultron processing...
-→ Web araması yapıldı, 5 kaynak okundu
-→ Özet: [detaylı yanıt]
-
-You> /rpa Take a screenshot and read the text on screen
-Ultron processing...
-→ Screenshot taken
-→ OCR: "Notepad - Untitled"
+# 6. Start frontend (in another terminal)
+cd ultron-desktop && npm install && npm run dev
 ```
 
 ---
 
-## 📦 Kurulu Modeller
+## 🖥️ GUI Usage
 
-| Model | Boyut | VRAM | Kullanım |
-|-------|-------|------|----------|
-| `qwen2.5:14b` | 9GB | ~9GB | Genel chat + research |
-| `qwen2.5-coder:7b` | 5GB | ~5GB | Kod yazma (özel eğitimli) |
-| `qwen3:8b` | 5GB | ~5GB | Function calling |
-| **OpenRouter Free** | Cloud | 0GB | 29 ücretsiz model (Claude, GPT, Llama) |
+The GUI features a modern 3-panel layout:
 
-### OpenRouter Ücretsiz Modeller
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Ultron v2.1                                    [⚡ Providers: 13]│
+├──────────┬──────────────────────────────┬───────────────────────┤
+│ Sidebar  │   Chat / Workspace           │   Inspector Panel     │
+│ (240px)  │                              │   (300px)             │
+│          │   ┌──────────────────────┐   │                       │
+│ • Agents │   │  AI Response         │   │  • Agent Status       │
+│ • Toggle │   │  (streaming)         │   │  • System Monitor     │
+│          │   └──────────────────────┘   │  • Memory Stats       │
+│          │   ┌──────────────────────┐   │  • Workspace Items    │
+│          │   │  Your message...     │   │  • Provider Status    │
+│          │   └──────────────────────┘   │                       │
+├──────────┴──────────────────────────────┴───────────────────────┤
+│  Status: ● Connected  |  Provider: Ollama  |  Latency: 312ms    │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-API key'in varsa `openrouter/free` router'ı otomatik olarak ücretsiz modeller arasında seçim yapar:
-- `arcee-ai/trinity-large-preview:free`
-- `google/gemma-2-9b-it:free`
-- `meta-llama/llama-3.1-8b-instruct:free`
-- Ve daha fazlası... **Kredi gerektirmez, tamamen bedava.**
+### Panel Toggle
+
+Click the toggle button in the sidebar to switch between **Chat** and **Workspace** views in the center panel.
+
+### Workspace Panel
+
+Three tabs for workspace operations:
+
+| Tab | Function | Description |
+|-----|----------|-------------|
+| **Clone** | Website Cloning | Clone any website URL, extracts UI components |
+| **Generate** | App Generation | Generate a complete app from a text description |
+| **Synthesize** | RAG Synthesis | Combine existing templates to create new apps |
 
 ---
 
-## 🔧 API Anahtarları (`.env`)
+## 🤖 Agents & Commands
+
+Ultron uses **8 specialized agents** that are automatically selected based on your intent:
+
+| Agent | Description | Example Commands |
+|-------|-------------|------------------|
+| **CoderAgent** | Code writing, debugging, execution | "Write fibonacci in Python" |
+| **ResearcherAgent** | Web research, synthesis | "What is quantum computing?" |
+| **RPAOperatorAgent** | Computer control (screen, OCR, input) | "Open Chrome" |
+| **EmailAgent** | Email reading, summarization, sending | "Summarize my emails" |
+| **SystemMonitorAgent** | CPU/RAM/disk monitoring | "What's the system status?" |
+| **ClipboardAgent** | Clipboard content analysis | "Analyze the code in clipboard" |
+| **MeetingAgent** | Meeting recording and transcription | "Start recording meeting" |
+| **FileOrganizerAgent** | File organization, duplicate detection | "Organize my desktop" |
+
+### Email Agent
 
 ```
-OPENROUTER_API_KEY=sk-or-v1-xxxxx    # Claude/GPT ücretsiz erişim
-OPENAI_API_KEY=sk-proj-xxxxx         # OpenAI fallback (opsiyonel)
+"read my emails"           → List last 10 emails
+"morning briefing"         → Summarize top 5 important emails
+"write this to ahmet"      → Draft email
+"send"                    → Send the draft
 ```
 
-**OpenRouter'dan ücretsiz API key al:**
-1. `openrouter.ai` → Sign up
-2. Settings → API Keys → Create key
-3. `.env` dosyasına yapıştır
-
----
-
-## 🧠 Mimari
+### Meeting Agent
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│                    ULTRON v2.0                            │
-│                                                          │
-│  ┌────────────────────────────────────────────────────┐ │
-│  │  GUI (Mark-XXXV) + Voice Pipeline                   │ │
-│  │  🎤 STT: Google Web Speech → Whisper (yedek)       │ │
-│  │  🔊 TTS: edge-tts (tr-TR-EmelNeural)               │ │
-│  └───────────────────┬────────────────────────────────┘ │
-│                      │                                   │
-│  ┌───────────────────▼────────────────────────────────┐ │
-│  │  v2 Orchestrator                                    │ │
-│  │  ┌──────────┐ ┌───────────┐ ┌─────────────────┐   │ │
-│  │  │  Coder   │ │Researcher │ │  RPA Operator   │   │ │
-│  │  │(coder:7b)│ │ (14b)     │ │ (14b)           │   │ │
-│  │  └────┬─────┘ └─────┬─────┘ └────────┬────────┘   │ │
-│  └───────┼─────────────┼────────────────┼────────────┘ │
-│          │             │                │              │
-│  ┌───────▼─────────────▼────────────────▼────────────┐ │
-│  │          Hybrid LLM Router                         │ │
-│  │  openrouter_free → ollama → openrouter (fallback) │ │
-│  └───────────────────────────────────────────────────┘ │
-│                                                          │
-│  ┌───────────────────────────────────────────────────┐  │
-│  │  Memory Engine                                     │  │
-│  │  ChromaDB (Vector) + NetworkX (Graph) + Lessons   │  │
-│  └───────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────┘
+"start recording"          → Start microphone recording
+"stop meeting"            → Stop recording and transcribe
+"summarize"               → Generate summary + action items
+```
+
+Output saved to: `data/meetings/YYYY-MM-DD_HH-MM.md`
+
+### File Organizer
+
+```
+"organize desktop"        → Categorize desktop files
+"find duplicates"         → Detect duplicate files
+"organize downloads"      → Sort the Downloads folder
 ```
 
 ---
 
-## 🛠️ Tanılama Komutları
+## 🧠 Memory System
 
-| Komut | Açıklama |
-|-------|----------|
-| `python -m ultron.cli --list-mics` | Mikrofonları listele |
-| `python -m ultron.cli --test-mic` | Mikrofonu test et |
-| `python -m ultron.v2.bootstrap --status` | v2 sistem durumu |
-| `python -m ultron.v2.bootstrap --test-coder` | Coder Agent test |
-| `python -m ultron.v2.bootstrap --test-rpa` | RPA Agent test |
-| `ollama ls` | Yüklü modelleri listele |
+Ultron uses a **3-layer unified memory** architecture:
+
+### 1. Working Memory (Short-Term)
+- Holds the last **20 messages** (deque)
+- Token limit: **4000 tokens**
+- Auto-summarizes when exceeded
+
+### 2. Long-Term Memory
+- **SQLite + FTS5**: Full-text lexical search
+- **ChromaDB**: Vector-based semantic search
+- **Hybrid search**: Combined via Reciprocal Rank Fusion (RRF)
+- **Decay**: Unimportant memories older than 90 days fade away
+- **Consolidation**: Auto-consolidation runs nightly at 03:00
+
+### 3. Procedural Memory (Strategies)
+- Stores successful task completion patterns
+- Tracks exponential moving average success rates
+- Recommends the best strategy for similar tasks
 
 ---
 
-## ⚙️ Yapılandırma
+## ⚙️ Configuration
 
-### `config.yaml`
+### Environment Variables (`.env`)
+
+```env
+# Email (optional)
+ULTRON_EMAIL_USER=your@email.com
+ULTRON_EMAIL_PASS=your_app_password
+
+# API Key Protection (optional)
+ULTRON_API_KEY=your_secret_key
+
+# Ollama (default: local)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=qwen2.5:14b
+
+# Cloud AI Providers (optional fallbacks)
+GROQ_API_KEY=gsk_...
+GEMINI_API_KEY=AIzaSyD...
+OPENROUTER_API_KEY=sk-or-v1-...
+# ... add any provider keys you want
+```
+
+> 🔑 **No API keys are required.** Ollama runs locally. All cloud providers are optional fallbacks.
+
+### Agent Configuration (`config/agents.yaml`)
+
 ```yaml
-model:
-  ollama_model: "qwen2.5:14b"   # Aktif model
-  ollama_base_url: "http://localhost:11434"
-  max_tokens: 4096
-  temperature: 0.7
-  language: "tr"
+agents:
+  email:
+    check_interval_minutes: 30
+    max_emails_summary: 5
+  sysmon:
+    poll_interval_seconds: 5
+    alert_thresholds:
+      cpu_percent: 85
+      ram_percent: 90
+      disk_percent: 95
+  meeting:
+    whisper_model: "base"
+    language: "en"
+  files:
+    watch_dirs:
+      - "~/Downloads"
+      - "~/Desktop"
 ```
-
-### Ortam Değişkenleri
-
-| Değişken | Açıklama |
-|----------|----------|
-| `ULTRON_MODEL` | Varsayılan model (`qwen2.5:14b`) |
-| `ULTRON_STT` | STT motoru: `google` veya `whisper` |
-| `ULTRON_TTS_VOICE` | TTS sesi (`tr-TR-EmelNeural`) |
-| `OPENROUTER_API_KEY` | OpenRouter API key |
-| `OLLAMA_BASE_URL` | Ollama sunucu (`http://localhost:11434`) |
 
 ---
 
-## 🔍 Sorun Giderme
+## 🌐 13 AI Providers
 
-### GUI açılmıyor / donuyor
+Ultron routes to **13 AI providers** with task-aware selection and automatic fallback:
+
+| # | Provider | Type | Cost | Best For |
+|---|----------|------|------|----------|
+| 1 | **Ollama** | Local | 🆓 Free | Privacy, code generation |
+| 2 | **Groq** | Cloud | 🆓 Free | Speed (500 tok/s) |
+| 3 | **DeepSeek** | Cloud | 💰 Cheap ($0.14/M tok) | Code, reasoning |
+| 4 | **Anthropic** | Cloud | 💳 Paid | Understanding, analysis |
+| 5 | **OpenRouter** | Cloud | 🆓+💳 Mixed | 200+ models, variety |
+| 6 | **Gemini** | Cloud | 🆓 Free | Long context (1M) |
+| 7 | **Mistral** | Cloud | 💳 Paid | GDPR compliance |
+| 8 | **Fireworks** | Cloud | 💳 Paid | Fast inference |
+| 9 | **Cloudflare** | Cloud | 🆓 Free (10K/day) | Reliable fallback |
+| 10 | **Together** | Cloud | 💳 Free ($25 credit) | YLlama models |
+| 11 | **Cohere** | Cloud | 💳 Paid | RAG reranking |
+| 12 | **HuggingFace** | Cloud | 🆓 Free tier | Last free fallback |
+| 13 | **OpenAI** | Cloud | 💳 Paid | Ultimate fallback |
+
+### Smart Task Routing
+
+| Task Type | Priority Order |
+|-----------|---------------|
+| `fast` | Groq → DeepSeek → Fireworks → Ollama → Cloudflare → OpenRouter |
+| `code` | Ollama → DeepSeek → Anthropic → OpenRouter → Groq → Together |
+| `long` | Gemini → OpenRouter → Anthropic → Ollama |
+| `cheap` | Ollama → DeepSeek → Cloudflare → HuggingFace → Groq |
+| `creative` | Anthropic → OpenRouter → Mistral → Ollama → Gemini |
+| `private` | Ollama → Mistral → Cohere |
+| `default` | All 13 in priority order |
+
+---
+
+## 🎙️ Voice & Language
+
+Ultron supports **voice input and output** with multi-language support:
+
+| Component | English | Turkish |
+|-----------|---------|---------|
+| **STT (Speech-to-Text)** | Google Web Speech API (en-US) + Whisper fallback | Google Web Speech API (tr-TR) + Whisper fallback |
+| **TTS (Text-to-Speech)** | edge-tts `en-US-JennyNeural` | edge-tts `tr-TR-EmelNeural` |
+| **VAD (Voice Activity)** | Silero VAD (universal) | Silero VAD (universal) |
+
+### Setup Voice
+
 ```bash
-# Ollama'yı kontrol et
+# 1. Install voice dependencies
+pip install SpeechRecognition openai-whisper torch edge-tts pygame sounddevice silero-vad
+
+# 2. Set language in .env
+ULTRON_LANGUAGE=en    # or "tr" for Turkish
+```
+
+### Voice Pipeline Flow
+
+```
+Microphone → Silero VAD → Google STT → Ollama LLM → edge-tts → Speaker
+                            ↓ (fallback)
+                        Whisper STT
+```
+
+- **Barge-in**: Ultron stops speaking when you start talking
+- **Auto-detection**: Language is set via `ULTRON_LANGUAGE` in `.env`
+- **Offline option**: Whisper STT works entirely offline
+
+---
+
+## 💼 Workspace + RAG
+
+### Clone a Website
+
+```bash
+curl -X POST http://localhost:8000/api/v2/workspace/clone \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com", "extract_components": true}'
+```
+
+Downloads the full rendered HTML (via Playwright), detects UI components (navbar, hero, cards, footer), and saves to `workspace/cloned_templates/`.
+
+### Generate an App from an Idea
+
+```bash
+curl -X POST http://localhost:8000/api/v2/workspace/generate \
+  -H "Content-Type: application/json" \
+  -d '{"idea": "Todo list application", "tech_stack": "html-css-js"}'
+```
+
+Ollama writes a complete, working app saved to `workspace/generated_apps/`.
+
+### RAG Synthesis
+
+```bash
+curl -X POST http://localhost:8000/api/v2/workspace/synthesize \
+  -H "Content-Type: application/json" \
+  -d '{"user_command": "Create a dark-themed dashboard", "target_project": "my-dashboard"}'
+```
+
+ChromaDB finds the most relevant templates semantically, then LLM synthesizes a new app from them.
+
+---
+
+## 🔌 API Endpoints
+
+### Core Endpoints
+
+| Endpoint | Method | Rate Limit | Description |
+|----------|--------|------------|-------------|
+| `/` | `GET` | — | API info |
+| `/health` | `GET` | 60/min | Health check — status + uptime |
+| `/docs` | `GET` | — | Interactive Swagger UI |
+| `/status` | `GET` | — | System, agents & providers status |
+
+### AI Provider Endpoints
+
+| Endpoint | Method | Rate Limit | Description |
+|----------|--------|------------|-------------|
+| `POST /api/v2/chat` | `POST` | 30/min | Multi-provider chat with smart routing |
+| `GET /api/v2/providers/status` | `GET` | — | All providers availability + latency |
+
+### Workspace Endpoints
+
+| Endpoint | Method | Rate Limit | Description |
+|----------|--------|------------|-------------|
+| `POST /api/v2/workspace/clone` | `POST` | 5/min | Clone a website URL |
+| `POST /api/v2/workspace/generate` | `POST` | 10/min | Generate app from idea |
+| `POST /api/v2/workspace/synthesize` | `POST` | 10/min | RAG synthesis from templates |
+| `GET /api/v2/workspace/list` | `GET` | — | List all workspace items |
+| `GET /api/v2/workspace/search?q=...` | `GET` | — | Semantic search via ChromaDB |
+
+### Example: Multi-Provider Chat
+
+```bash
+curl -X POST http://localhost:8000/api/v2/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [{"role": "user", "content": "Hello!"}],
+    "task_type": "fast",
+    "preferred_provider": "groq"
+  }'
+```
+
+Response:
+```json
+{
+  "success": true,
+  "content": "Hello! How can I help you today?",
+  "provider": "groq",
+  "model": "llama-3.3-70b-versatile",
+  "tokens_used": 24,
+  "latency_ms": 312
+}
+```
+
+---
+
+## 🛠️ Development
+
+### Run Tests
+
+```bash
+pytest tests/ -v --cov=ultron
+```
+
+### Project Structure
+
+```
+Ultron/
+├── config/                         # YAML configurations
+├── ultron/
+│   ├── api/                        # FastAPI backend
+│   │   ├── main.py                 # App entry + 19 routes
+│   │   └── routes/                 # chat, agents, status
+│   ├── v2/                         # Core v2 system
+│   │   ├── core/                   # Orchestrator, LLM router, Hermes TAO
+│   │   ├── agents/                 # 8 specialized agents
+│   │   ├── memory/                 # 3-layer unified memory
+│   │   ├── providers/              # 13 AI providers + router + fallback
+│   │   └── workspace/              # Playwright clone, code gen, RAG
+│   └── actions/                    # Local tools
+├── ultron-desktop/                 # React + Vite GUI
+│   ├── src/
+│   │   ├── App.tsx                 # 3-panel layout
+│   │   ├── components/
+│   │   │   ├── InspectorPanel.tsx  # 5-tab inspector
+│   │   │   ├── WorkspacePanel.tsx  # Clone/Generate/Synthesize
+│   │   │   └── Sidebar.tsx         # Agent status + panel switch
+│   │   └── hooks/useUltron.ts      # WebSocket streaming
+│   └── package.json
+├── workspace/                      # Generated/cloned projects
+├── data/                           # Memory, ChromaDB, meetings
+├── tests/                          # Pytest test suite
+├── pyproject.toml                  # Project metadata + deps
+└── start-ultron-desktop.bat        # One-click launcher
+```
+
+### Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Backend** | FastAPI, Uvicorn, Pydantic |
+| **LLM** | Ollama, LangChain, tiktoken |
+| **Providers** | 13 providers with smart routing + auto-fallback |
+| **Memory** | ChromaDB, SQLite + FTS5, sentence-transformers |
+| **Workspace** | Playwright, ChromaDB, CodeGenerator, RAG Synthesizer |
+| **Agents** | Custom multi-agent framework with event bus + blackboard |
+| **RPA** | pyautogui, mss, EasyOCR, OpenCV |
+| **Voice** | Whisper, SpeechRecognition, edge-tts |
+| **Frontend** | React 18, TypeScript, Vite 5, Tailwind CSS, Framer Motion |
+| **Desktop** | Tauri |
+
+---
+
+## 🔍 Troubleshooting
+
+### GUI won't open / freezes
+```bash
+# Check Ollama
 ollama ls
 ollama serve
 
-# Bağımlılıkları yükle
+# Install dependencies
 pip install -e .
 ```
 
-### Ses çıkmıyor (TTS)
+### No sound from TTS
 ```bash
 pip install edge-tts pygame
 ```
 
-### Mikrofon algılanmıyor
+### Microphone not detected
 ```bash
 python -m ultron.cli --list-mics
 python -m ultron.cli --test-mic
 ```
 
-### "No LLM providers available" hatası
+### "No LLM providers available" error
 ```bash
-# Ollama çalışıyor mu?
+# Is Ollama running?
 ollama serve
 
-# Model yüklü mü?
+# Is the model downloaded?
 ollama pull qwen2.5:14b
 ```
 
-### OpenRouter 402 hatası (kredi bitti)
-Sistem otomatik olarak yerel Ollama modeline fallback yapar. Manuel kredi yüklemek istersen:
-`openrouter.ai/settings/credits` → kredi ekle.
+---
+
+## 📜 License
+
+[MIT License](../LICENSE) — Copyright (c) 2025–2026 WexyS
+
+Free to use, modify, and distribute. No warranty.
 
 ---
 
-## 📋 Hızlı Başvuru
+<div align="center">
 
-| İşlem | Komut |
-|-------|-------|
-| **GUI Başlat** | `python -m ultron.cli` |
-| **v2 Terminal** | `python -m ultron.v2.bootstrap` |
-| **Kapat** | X butonu / `/quit` |
-| **Sustur** | F4 veya 🎙 butonu |
-| **Model Değiştir** | `config.yaml` → `ollama_model` |
-| **Sanal Ortam** | `.venv\Scripts\activate` / `deactivate` |
+**Built with ❤️ and local compute. 13 AI providers, 8 agents, infinite possibilities.**
 
----
-
-## 📁 Proje Yapısı
-
-```
-Ultron/
-├── ultron/
-│   ├── cli.py              # CLI entry point (GUI başlatır)
-│   ├── gui_app.py          # Mark-XXXV Tkinter GUI
-│   ├── config.py           # Yapılandırma (Pydantic)
-│   ├── voice_pipeline.py   # Sesli asistan pipeline
-│   ├── tts_voice.py        # TTS modülü
-│   ├── memory.py           # Eski bellek sistemi
-│   ├── llm.py              # Eski LLM router
-│   ├── coding.py           # Eski kod asistanı
-│   ├── research.py         # Eski araştırma asistanı
-│   └── v2/                 # ── YENİ v2 Multi-Agent ──
-│       ├── bootstrap.py    # v2 entry point
-│       ├── core/
-│       │   ├── orchestrator.py   # Merkezi beyin
-│       │   ├── llm_router.py     # Hybrid LLM routing
-│       │   ├── hermes.py         # Hermes TAO loop
-│       │   ├── event_bus.py      # Pub/sub event system
-│       │   └── blackboard.py     # Shared context
-│       ├── agents/
-│       │   ├── coder.py          # Self-healing kod agent
-│       │   ├── researcher.py     # Deep research agent
-│       │   └── rpa_operator.py   # Computer use agent
-│       └── memory/
-│           └── engine.py         # Vector+Graph+Lessons
-├── config.yaml
-├── .env
-├── pyproject.toml
-└── ultron_auto_patcher.py   # Otomatik hata düzeltme
-```
-
----
-
-## 🔄 Güncelleme Geçmişi
-
-| Tarih | Değişiklik |
-|-------|-----------|
-| 11.04.2026 | v2 Multi-Agent sistemi entegre edildi |
-| 11.04.2026 | OpenRouter ücretsiz modeller desteği eklendi |
-| 11.04.2026 | Coder Agent self-healing loop eklendi |
-| 11.04.2026 | GUI + v2 orchestrator bağlandı |
-| 11.04.2026 | qwen3.5:27b → qwen2.5:14b (12GB VRAM uyumlu) |
-| 11.04.2026 | Hermes TAO loop entegrasyonu |
-| 11.04.2026 | ultron_auto_patcher.py eklendi |
+</div>
