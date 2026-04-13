@@ -12,7 +12,7 @@ interface SidebarProps {
 
 export default function Sidebar({ status, onClear, activePanel, onPanelChange, onToggleConversationSidebar }: SidebarProps) {
   return (
-    <div className="w-64 border-r flex flex-col" style={{ backgroundColor: 'var(--color-panel)', borderColor: 'var(--color-border)' }}>
+    <div className="w-64 border-r flex flex-col relative z-20" style={{ backgroundColor: 'var(--color-panel)', borderColor: 'var(--color-border)' }}>
       {/* Logo / Brand */}
       <div className="px-6 py-5 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="flex items-center gap-3">

@@ -140,26 +140,30 @@ function App() {
 
   return (
     <div className="flex h-screen overflow-hidden font-sans bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
-      {/* Conversation Sidebar */}
-      <ConversationSidebar
-        conversations={conversations}
-        activeConversationId={activeConversationId}
-        onSelectConversation={handleSelectConversation}
-        onNewConversation={handleNewConversation}
-        onDeleteConversation={handleDeleteConversation}
-        onRenameConversation={handleRenameConversation}
-        isOpen={conversationSidebarOpen}
-        onClose={() => setConversationSidebarOpen(false)}
-      />
+      {/* Conversation Sidebar - Fixed position, overlays everything */}
+      <div className="relative z-40">
+        <ConversationSidebar
+          conversations={conversations}
+          activeConversationId={activeConversationId}
+          onSelectConversation={handleSelectConversation}
+          onNewConversation={handleNewConversation}
+          onDeleteConversation={handleDeleteConversation}
+          onRenameConversation={handleRenameConversation}
+          isOpen={conversationSidebarOpen}
+          onClose={() => setConversationSidebarOpen(false)}
+        />
+      </div>
 
       {/* ── SIDEBAR (260px) ────────────────────────── */}
-      <Sidebar
-        status={status}
-        onClear={clearMessages}
-        activePanel={activePanel}
-        onPanelChange={setActivePanel}
-        onToggleConversationSidebar={() => setConversationSidebarOpen(prev => !prev)}
-      />
+      <div className="relative z-30 flex-shrink-0">
+        <Sidebar
+          status={status}
+          onClear={clearMessages}
+          activePanel={activePanel}
+          onPanelChange={setActivePanel}
+          onToggleConversationSidebar={() => setConversationSidebarOpen(prev => !prev)}
+        />
+      </div>
 
       {/* ── MAIN CONTENT ─────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0">

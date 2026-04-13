@@ -95,23 +95,23 @@ export default function ConversationSidebar({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop for mobile */}
+          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            className="fixed inset-0 bg-black/50 z-30"
           />
-          
-          {/* Sidebar */}
+
+          {/* Sidebar - positioned to the left of main sidebar */}
           <motion.div
             initial={{ x: -320, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -320, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed left-0 top-0 bottom-0 w-80 z-50 flex flex-col"
-            style={{ 
+            className="fixed left-0 top-0 bottom-0 w-80 z-40 flex flex-col"
+            style={{
               backgroundColor: 'var(--color-panel)',
               borderRight: '1px solid var(--color-border)'
             }}
