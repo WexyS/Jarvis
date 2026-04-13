@@ -1,10 +1,10 @@
-# JARVIS v2.0 — Project Structure
+# ULTRON v2.0 — Project Structure
 
 ```
-Jarvis/
+Ultron/
 │
 ├── start.bat                    # Tek tıkla başlatıcı (Ollama + model kontrolü)
-├── start-jarvis-desktop.bat     # GUI + Desktop launcher
+├── start-ultron-desktop.bat     # GUI + Desktop launcher
 ├── pyproject.toml               # Python dependencies
 ├── .env                         # API keys (OpenRouter, Groq, Gemini, etc.)
 ├── .env.example                 # API key template
@@ -26,7 +26,7 @@ Jarvis/
 │
 ├── scripts/                     # Yardımcı scriptler
 │   ├── audit_v2.py
-│   ├── jarvis_auto_patcher.py
+│   ├── ultron_auto_patcher.py
 │   └── test_audio.py
 │
 ├── data/                        # Runtime veriler
@@ -35,7 +35,7 @@ Jarvis/
 │
 ├── workspace/                   # Coder Agent çalışma alanı
 │
-├── jarvis/                      # Python Backend
+├── ultron/                      # Python Backend
 │   ├── cli.py                   # CLI entry point (GUI başlatır)
 │   ├── config.py                # Pydantic config
 │   ├── gui_app.py               # Tkinter Mark-XXXV GUI
@@ -87,7 +87,7 @@ Jarvis/
 │       ├── weather_report.py
 │       └── web_search.py
 │
-└── jarvis-desktop/              # React + Tauri GUI (YENİ)
+└── ultron-desktop/              # React + Tauri GUI (YENİ)
     ├── package.json
     ├── vite.config.ts
     ├── tailwind.config.js
@@ -101,7 +101,7 @@ Jarvis/
     │   ├── vite-env.d.ts
     │   │
     │   ├── hooks/
-    │   │   └── useJarvis.ts     # WebSocket hook (streaming)
+    │   │   └── useUltron.ts     # WebSocket hook (streaming)
     │   │
     │   └── components/
     │       ├── ChatArea.tsx     # Message display

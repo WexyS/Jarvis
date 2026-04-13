@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🤖 J.A.R.V.I.S v2.1
+# Ultron v2.1
 
-> **J**ust **A** **R**ather **V**ery **I**ntelligent **S**ystem
+> An Advanced, Autonomous AI Assistant System
 
 <p>
   <a href="#features"><strong>Features</strong></a> •
@@ -64,7 +64,7 @@
 
 ```bash
 # Windows — double-click or run:
-start-jarvis-desktop.bat
+start-ultron-desktop.bat
 ```
 
 That's it. The script:
@@ -92,10 +92,10 @@ ollama pull qwen2.5:14b          # Download model
 ollama serve                     # Start server
 
 # 5. Start backend
-python -m uvicorn jarvis.api.main:app --host 127.0.0.1 --port 8000
+python -m uvicorn ultron.api.main:app --host 127.0.0.1 --port 8000
 
 # 6. Start frontend (in another terminal)
-cd jarvis-desktop && npm install && npm run dev
+cd ultron-desktop && npm install && npm run dev
 ```
 
 ---
@@ -104,7 +104,7 @@ cd jarvis-desktop && npm install && npm run dev
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│                        J.A.R.V.I.S v2.1                                │
+│                        Ultron v2.1                                     │
 ├────────────────────────────────────────────────────────────────────────┤
 │  ┌─────────────────────┐              ┌──────────────────────────┐    │
 │  │  React + Vite GUI   │◄────────────►│   FastAPI Backend        │    │
@@ -237,7 +237,7 @@ Content-based file classification, duplicate detection, desktop cleanup.
 
 ## 🌐 13 AI Providers
 
-Jarvis routes to **13 AI providers** with task-aware selection and automatic fallback:
+Ultron routes to **13 AI providers** with task-aware selection and automatic fallback:
 
 | # | Provider | Type | Cost | Best For |
 |---|----------|------|------|----------|
@@ -408,11 +408,11 @@ Response:
 
 ```env
 # Email (optional)
-JARVIS_EMAIL_USER=your@email.com
-JARVIS_EMAIL_PASS=your_app_password
+ULTRON_EMAIL_USER=your@email.com
+ULTRON_EMAIL_PASS=your_app_password
 
 # API Key Protection (optional)
-JARVIS_API_KEY=your_secret_key
+ULTRON_API_KEY=your_secret_key
 
 # Ollama (default: local)
 OLLAMA_BASE_URL=http://localhost:11434
@@ -466,7 +466,7 @@ agents:
 
 ## 🎙️ Voice & Language
 
-Jarvis supports **voice input and output** with multi-language support:
+Ultron supports **voice input and output** with multi-language support:
 
 | Component | English | Turkish |
 |-----------|---------|---------|
@@ -481,7 +481,7 @@ Jarvis supports **voice input and output** with multi-language support:
 pip install SpeechRecognition openai-whisper torch edge-tts pygame sounddevice silero-vad
 
 # 2. Set language in .env
-JARVIS_LANGUAGE=en    # or "tr" for Turkish
+ULTRON_LANGUAGE=en    # or "tr" for Turkish
 ```
 
 ### Voice Pipeline Flow
@@ -492,8 +492,8 @@ Microphone → Silero VAD → Google STT → Ollama LLM → edge-tts → Speaker
                         Whisper STT
 ```
 
-- **Barge-in**: Jarvis stops speaking when you start talking
-- **Auto-detection**: Language is set via `JARVIS_LANGUAGE` in `.env`
+- **Barge-in**: Ultron stops speaking when you start talking
+- **Auto-detection**: Language is set via `ULTRON_LANGUAGE` in `.env`
 - **Offline option**: Whisper STT works entirely offline
 
 ---
@@ -503,15 +503,15 @@ Microphone → Silero VAD → Google STT → Ollama LLM → edge-tts → Speaker
 ### Run Tests
 
 ```bash
-pytest tests/ -v --cov=jarvis
+pytest tests/ -v --cov=ultron
 ```
 
 ### Project Structure
 
 ```
-Jarvis/
+Ultron/
 ├── config/                         # YAML configurations
-├── jarvis/
+├── ultron/
 │   ├── api/                        # FastAPI backend
 │   │   ├── main.py                 # App entry + 19 routes
 │   │   └── routes/                 # chat, agents, status
@@ -522,20 +522,20 @@ Jarvis/
 │   │   ├── providers/              # 13 AI providers + router + fallback
 │   │   └── workspace/              # Playwright clone, code gen, RAG
 │   └── actions/                    # Local tools
-├── jarvis-desktop/                 # React + Vite GUI
+├── ultron-desktop/                 # React + Vite GUI
 │   ├── src/
 │   │   ├── App.tsx                 # 3-panel layout
 │   │   ├── components/
 │   │   │   ├── InspectorPanel.tsx  # 5-tab inspector
 │   │   │   ├── WorkspacePanel.tsx  # Clone/Generate/Synthesize
 │   │   │   └── Sidebar.tsx         # Agent status + panel switch
-│   │   └── hooks/useJarvis.ts      # WebSocket streaming
+│   │   └── hooks/useUltron.ts      # WebSocket streaming
 │   └── package.json
 ├── workspace/                      # Generated/cloned projects
 ├── data/                           # Memory, ChromaDB, meetings
 ├── tests/                          # Pytest test suite
 ├── pyproject.toml                  # Project metadata + deps
-└── start-jarvis-desktop.bat        # One-click launcher
+└── start-ultron-desktop.bat        # One-click launcher
 ```
 
 ### Tech Stack

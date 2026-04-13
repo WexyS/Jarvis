@@ -1,7 +1,7 @@
 [project]
-name = "jarvis-assistant"
+name = "ultron-assistant"
 version = "2.0.0"
-description = "J.A.R.V.I.S v2.0 — Personal Multi-Agent AI Assistant"
+description = "Ultron v2.0 — Personal Multi-Agent AI Assistant"
 requires-python = ">=3.10"
 dependencies = [
     # ── Core ──────────────────────────────────────────────────────────
@@ -75,6 +75,11 @@ dependencies = [
 
     # ── Additional Provider SDKs (optional) ───────────────────────────
     "tenacity>=8.3.0",
+
+    # ── Skill System (BÖLÜM 2) ────────────────────────────────────────
+    "sentence-transformers>=2.2.0",    # already present — confirmed
+    "aiosqlite>=0.20.0",               # already present — confirmed
+    "google-generativeai>=0.8.0",      # Gemini SDK
 ]
 
 [project.optional-dependencies]
@@ -86,14 +91,14 @@ dev = [
 ]
 
 [project.scripts]
-jarvis = "jarvis.cli:main"
+ultron = "ultron.cli:main"
 
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-include = ["jarvis*"]
+include = ["ultron*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

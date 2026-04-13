@@ -49,7 +49,7 @@ Each provider checks:
 
 ## Adding New Providers
 
-1. Create file in `jarvis/v2/providers/`
+1. Create file in `ultron/v2/providers/`
 2. Extend `BaseProvider`
 3. Add to `router.py` `_load_providers()`
 4. Add to `TASK_PRIORITY` dict

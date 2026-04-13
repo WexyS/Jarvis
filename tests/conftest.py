@@ -1,4 +1,4 @@
-"""Pytest fixtures for Jarvis v2.0 tests."""
+"""Pytest fixtures for Ultron v2.0 tests."""
 
 from __future__ import annotations
 
@@ -78,6 +78,6 @@ def mock_blackboard() -> MagicMock:
 @pytest.fixture()
 def tmp_path_for_db(tmp_path: Path) -> Path:
     """Provide a temporary directory for test database files."""
-    db_dir = tmp_path / "jarvis_test_db"
+    db_dir = tmp_path / "ultron_test_db"
     db_dir.mkdir(parents=True, exist_ok=True)
     return db_dir

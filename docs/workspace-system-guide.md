@@ -1,10 +1,10 @@
-# 🎉 Jarvis v2.1 - Complete Workspace & GUI Update
+# 🎉 Ultron v2.1 - Complete Workspace & GUI Update
 
 ## ✅ Tüm Görevler Tamamlandı!
 
 ### 🌐 Website Klonlama Sistemi (Verdent.ai Tarzı)
 
-#### 1. **WebsiteCloneAgent** (`jarvis/v2/workspace/clone_agent.py`)
+#### 1. **WebsiteCloneAgent** (`ultron/v2/workspace/clone_agent.py`)
 - **Playwright** ile tam sayfa render (JavaScript destekli)
 - Otomatik component tespiti (navbar, hero, footer, card, form, vs.)
 - HTML temizleme ve optimizasyon
@@ -22,7 +22,7 @@
 ✅ Workspace indexing
 ```
 
-#### 2. **CodeGeneratorAgent** (`jarvis/v2/workspace/code_generator.py`)
+#### 2. **CodeGeneratorAgent** (`ultron/v2/workspace/code_generator.py`)
 - Fikir metninden sıfırdan uygulama üretme
 - LLM ile akıllı kod üretimi (Ollama qwen2.5-coder)
 - Multi-file generation (HTML, CSS, JS, Python)
@@ -38,7 +38,7 @@
 ✅ Generation logging
 ```
 
-#### 3. **RAGSynthesizerAgent** (`jarvis/v2/workspace/rag_synthesizer.py`)
+#### 3. **RAGSynthesizerAgent** (`ultron/v2/workspace/rag_synthesizer.py`)
 - Mevcut şablonlardan yeni uygulama sentezleme
 - Relevance-based template matching
 - Component extraction ve reuse
@@ -54,7 +54,7 @@
 ✅ Metadata tracking
 ```
 
-#### 4. **WorkspaceManager** (`jarvis/v2/workspace/workspace_manager.py`)
+#### 4. **WorkspaceManager** (`ultron/v2/workspace/workspace_manager.py`)
 - SQLite manifest database (FTS5 support)
 - Clone/Generate/Synthesize orchestration
 - ChromaDB embedding storage (gelecekteki semantic search için)
@@ -127,20 +127,20 @@
 
 ### Backend (Python):
 ```
-✅ jarvis/v2/workspace/workspace_manager.py
-✅ jarvis/v2/workspace/clone_agent.py
-✅ jarvis/v2/workspace/code_generator.py
-✅ jarvis/v2/workspace/rag_synthesizer.py
+✅ ultron/v2/workspace/workspace_manager.py
+✅ ultron/v2/workspace/clone_agent.py
+✅ ultron/v2/workspace/code_generator.py
+✅ ultron/v2/workspace/rag_synthesizer.py
 ```
 
 ### Frontend (React/TypeScript):
 ```
-✅ jarvis-desktop/src/App.tsx
-✅ jarvis-desktop/src/index.css
-✅ jarvis-desktop/src/components/Sidebar.tsx
-✅ jarvis-desktop/src/components/WorkspacePanel.tsx
-✅ jarvis-desktop/src/components/VoiceControl.tsx
-✅ jarvis-desktop/src/components/InputBox.tsx
+✅ ultron-desktop/src/App.tsx
+✅ ultron-desktop/src/index.css
+✅ ultron-desktop/src/components/Sidebar.tsx
+✅ ultron-desktop/src/components/WorkspacePanel.tsx
+✅ ultron-desktop/src/components/VoiceControl.tsx
+✅ ultron-desktop/src/components/InputBox.tsx
 ```
 
 ### Dokümantasyon:
@@ -154,15 +154,15 @@
 
 ## 🚀 Nasıl Kullanılır?
 
-### 1. Jarvis'i Başlat
+### 1. Ultron'i Başlat
 ```bash
 # Windows
-start-jarvis-desktop.bat
+start-ultron-desktop.bat
 
 # Manuel
 .venv\Scripts\activate
-python -m uvicorn jarvis.api.main:app --host 127.0.0.1 --port 8000
-cd jarvis-desktop && npm install && npm run dev
+python -m uvicorn ultron.api.main:app --host 127.0.0.1 --port 8000
+cd ultron-desktop && npm install && npm run dev
 ```
 
 ### 2. Website Klonla
@@ -267,7 +267,7 @@ Workspace panelinde "Recent Projects" bölümünde tüm projeler görünür
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  ⚡ Jarvis          💬 Chat | 🌐 Workspace    👤 Ready  │
+│  ⚡ Ultron          💬 Chat | 🌐 Workspace    👤 Ready  │
 │  AI Assistant v2.1                              [⚙️]    │
 ├──────────┬──────────────────────────────┬───────────────┤
 │          │                              │               │
@@ -341,4 +341,4 @@ Workspace panelinde "Recent Projects" bölümünde tüm projeler görünür
 ✅ ✅ Debugging yapıldı, tüm sistemler test edildi
 ✅ ✅ Dokümantasyon oluşturuldu
 
-**Jarvis artık profesyonel, modern ve tam fonksiyonel!** 🚀
+**Ultron artık profesyonel, modern ve tam fonksiyonel!** 🚀

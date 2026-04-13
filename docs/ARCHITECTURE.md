@@ -1,8 +1,8 @@
-# J.A.R.V.I.S Architecture
+# Ultron Architecture
 
 ## Overview
 
-Jarvis is a **locally-hosted, multi-agent AI assistant** with 13 AI providers, workspace RAG system, and a modern 3-panel GUI.
+Ultron is a **locally-hosted, multi-agent AI assistant** with 13 AI providers, workspace RAG system, and a modern 3-panel GUI.
 
 ## System Diagram
 

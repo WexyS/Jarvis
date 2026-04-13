@@ -1,4 +1,4 @@
-# Jarvis v2 — Full Project Audit Report
+# Ultron v2 — Full Project Audit Report
 
 **Date:** 11 Nisan 2026
 **Auditor:** AI Systems Engineer (using custom audit tools)
@@ -17,7 +17,7 @@
 **Fixed during audit:**
 - `scripts/gen_hermes.py` — broken triple-quoted string (deleted, was a helper)
 - `scripts/gen_loop.py` — same issue (deleted, was a helper)
-- `jarvis/v2/core/orchestrator.py` — `AttributeError: '_tool_declarations'` (fixed by removing dead reference)
+- `ultron/v2/core/orchestrator.py` — `AttributeError: '_tool_declarations'` (fixed by removing dead reference)
 
 ---
 
@@ -137,7 +137,7 @@
 ## 8. File Inventory
 
 ```
-jarvis/v2/
+ultron/v2/
 ├── __init__.py              (1 line)
 ├── bootstrap.py             (260 lines) — Entry point
 ├── core/

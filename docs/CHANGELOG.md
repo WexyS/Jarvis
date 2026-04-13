@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to J.A.R.V.I.S.
+All notable changes to Ultron.
 
 ## [2.1.0] — 2026-04-12
 

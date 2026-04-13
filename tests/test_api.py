@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 from httpx import ASGITransport, AsyncClient
 
 # ---------------------------------------------------------------------------
-# Minimal test app (mimics jarvis.api.main without the orchestrator)
+# Minimal test app (mimics ultron.api.main without the orchestrator)
 # ---------------------------------------------------------------------------
 
 _START_TIME = time.time()
@@ -25,12 +25,12 @@ _test_orchestrator: Optional[object] = None  # Simulates "no orchestrator"
 def _build_test_app() -> FastAPI:
     """Build a minimal FastAPI app that mirrors the real endpoint shapes."""
 
-    app = FastAPI(title="Jarvis v2.0 API (test)", version="2.1.0")
+    app = FastAPI(title="Ultron v2.0 API (test)", version="2.1.0")
 
     @app.get("/")
     async def root():
         return {
-            "name": "Jarvis v2.0 API",
+            "name": "Ultron v2.0 API",
             "version": "2.1.0",
             "status": "running" if _test_orchestrator else "initializing",
             "docs": "/docs",
@@ -100,7 +100,7 @@ class TestRootEndpoint:
         assert response.status_code == 200
         data = response.json()
         assert "name" in data
-        assert data["name"] == "Jarvis v2.0 API"
+        assert data["name"] == "Ultron v2.0 API"
         assert "version" in data
         assert data["version"] == "2.1.0"
         assert "status" in data

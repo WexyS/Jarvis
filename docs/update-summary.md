@@ -1,4 +1,4 @@
-# 🎉 Jarvis v2.1 - Complete Update Summary
+# 🎉 Ultron v2.1 - Complete Update Summary
 
 ## ✅ Latest Updates (April 2026)
 
@@ -68,25 +68,25 @@
 ## 📦 Files Created/Modified
 
 ### New Components:
-- `jarvis-desktop/src/components/AgentsPanel.tsx`
-- `jarvis-desktop/src/components/VoiceControl.tsx`
+- `ultron-desktop/src/components/AgentsPanel.tsx`
+- `ultron-desktop/src/components/VoiceControl.tsx`
 
 ### Updated Components:
-- `jarvis-desktop/src/App.tsx`
-- `jarvis-desktop/src/components/Sidebar.tsx`
-- `jarvis-desktop/src/components/InputBox.tsx`
-- `jarvis-desktop/src/components/WorkspacePanel.tsx`
-- `jarvis-desktop/src/index.css`
+- `ultron-desktop/src/App.tsx`
+- `ultron-desktop/src/components/Sidebar.tsx`
+- `ultron-desktop/src/components/InputBox.tsx`
+- `ultron-desktop/src/components/WorkspacePanel.tsx`
+- `ultron-desktop/src/index.css`
 
 ### New Agents:
-- `jarvis/v2/agents/calendar_agent.py`
-- `jarvis/v2/agents/task_manager_agent.py`
+- `ultron/v2/agents/calendar_agent.py`
+- `ultron/v2/agents/task_manager_agent.py`
 
 ### Workspace System:
-- `jarvis/v2/workspace/workspace_manager.py`
-- `jarvis/v2/workspace/clone_agent.py`
-- `jarvis/v2/workspace/code_generator.py`
-- `jarvis/v2/workspace/rag_synthesizer.py`
+- `ultron/v2/workspace/workspace_manager.py`
+- `ultron/v2/workspace/clone_agent.py`
+- `ultron/v2/workspace/code_generator.py`
+- `ultron/v2/workspace/rag_synthesizer.py`
 
 ---
 
@@ -159,4 +159,4 @@
 
 ---
 
-**All systems operational! Jarvis v2.1 is ready for production.** 🚀
+**All systems operational! Ultron v2.1 is ready for production.** 🚀

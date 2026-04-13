@@ -1,4 +1,4 @@
-# J.A.R.V.I.S v2.1 — User Guide
+# Ultron v2.1 — User Guide
 
 Personal, locally-hosted multi-agent AI assistant. FastAPI + React GUI + 13 AI providers.
 
@@ -33,17 +33,17 @@ cp .env.example .env
 # Edit .env with your API keys (optional)
 
 # 6. Start backend
-python -m uvicorn jarvis.api.main:app --host 127.0.0.1 --port 8000
+python -m uvicorn ultron.api.main:app --host 127.0.0.1 --port 8000
 
 # 7. Start GUI (optional, in another terminal)
-cd jarvis-desktop && npm install && npm run dev
+cd ultron-desktop && npm install && npm run dev
 ```
 
 ### Quick Start
 
 ```bash
 # One-click launch (Windows)
-start-jarvis-desktop.bat
+start-ultron-desktop.bat
 ```
 
 ---
@@ -89,7 +89,7 @@ start-jarvis-desktop.bat
 
 ## Memory System
 
-Jarvis uses a 3-layer unified memory architecture:
+Ultron uses a 3-layer unified memory architecture:
 
 ### 1. Working Memory (Short-Term)
 - Holds last 20 messages (deque)
@@ -131,9 +131,9 @@ agents:
 
 ### .env Variables
 ```
-JARVIS_EMAIL_USER=your@email.com
-JARVIS_EMAIL_PASS=your_app_password
-JARVIS_API_KEY=optional_api_key     # For API protection
+ULTRON_EMAIL_USER=your@email.com
+ULTRON_EMAIL_PASS=your_app_password
+ULTRON_API_KEY=optional_api_key     # For API protection
 OLLAMA_BASE_URL=http://localhost:11434
 ```
 
@@ -145,7 +145,7 @@ None are required — Ollama is the default and only mandatory provider.
 
 ## AI Providers
 
-Jarvis supports **13 AI providers** with smart routing and automatic fallback:
+Ultron supports **13 AI providers** with smart routing and automatic fallback:
 
 | # | Provider | Type | Cost |
 |---|----------|------|------|
@@ -214,7 +214,7 @@ curl -X POST http://localhost:8000/api/v2/workspace/synthesize \
 - Returns `429 Too Many Requests` when exceeded
 
 ### API Key Protection (Optional)
-If `JARVIS_API_KEY` is set in `.env`:
+If `ULTRON_API_KEY` is set in `.env`:
 ```
 X-API-Key: your_secret_key
 ```
@@ -225,7 +225,7 @@ header is required for all requests.
 ## Running Tests
 
 ```bash
-pytest tests/ -v --cov=jarvis
+pytest tests/ -v --cov=ultron
 ```
 
 ---

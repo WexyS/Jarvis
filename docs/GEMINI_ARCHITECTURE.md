@@ -1,8 +1,8 @@
-# J.A.R.V.I.S v2.0 — Complete Architecture Document (For Gemini)
+# Ultron v2.0 — Complete Architecture Document (For Gemini)
 
 ## 1. PROJECT OVERVIEW
 
-**Name:** J.A.R.V.I.S v2.0 (Just A Rather Very Intelligent System)
+**Name:** Ultron v2.0 (Advanced Unified Learning & Tactical Response Operations Network)
 **Type:** Personal AI Assistant with Multi-Agent, Self-Healing, RPA, and Web GUI
 **Language:** Python 3.11 (Primary), TypeScript/React (Frontend)
 **Runtime:** Local (RTX 4080 Mobile 12GB VRAM, 32GB RAM, Windows 11)
@@ -12,10 +12,10 @@
 ## 2. PROJECT STRUCTURE
 
 ```
-Jarvis/
+Ultron/
 │
 ├── start.bat                              # Tkinter GUI Launcher
-├── start-jarvis-desktop.bat               # Web GUI Launcher (React + FastAPI)
+├── start-ultron-desktop.bat               # Web GUI Launcher (React + FastAPI)
 ├── .env                                   # API Keys (OpenRouter, OpenAI)
 ├── pyproject.toml                         # Python dependencies
 ├── README.md                              # Root README
@@ -28,7 +28,7 @@ Jarvis/
 │
 ├── workspace/                             # Coder Agent sandbox (code execution output)
 │
-├── jarvis/
+├── ultron/
 │   ├── cli.py                             # CLI Entry Point — launches Tkinter GUI, initializes v2 orchestrator
 │   ├── gui_app.py                         # Tkinter GUI (Mark-XXXV animated interface, 550+ lines)
 │   ├── config.py                          # Pydantic config management
@@ -66,7 +66,7 @@ Jarvis/
 │       │   ├── blackboard.py              # Shared context memory between agents
 │       │   ├── types.py                   # Data structures (Task, AgentRole, AgentStatus, ToolCall)
 │       │   ├── hermes.py                  # Hermes TAO (Thought-Action-Observation) loop
-│       │   └── prompt.txt                 # SYSTEM PROMPT — Jarvis identity, rules, Turkish language enforcement
+│       │   └── prompt.txt                 # SYSTEM PROMPT — Ultron identity, rules, Turkish language enforcement
 │       │
 │       ├── agents/
 │       │   ├── base.py                    # Base Agent class (LLM routing, event subscription, blackboard access)
@@ -77,7 +77,7 @@ Jarvis/
 │       └── memory/
 │           └── engine.py                  # Memory Engine — ChromaDB (vector), NetworkX (graph), Lessons Store
 │
-└── jarvis-desktop/                        # Web GUI (React 18 + TypeScript + Tailwind + Vite)
+└── ultron-desktop/                        # Web GUI (React 18 + TypeScript + Tailwind + Vite)
     ├── package.json
     ├── vite.config.ts
     ├── tailwind.config.js
@@ -89,7 +89,7 @@ Jarvis/
     │   ├── index.css                      # Tailwind + custom styles (dark theme, scrollbars)
     │   ├── vite-env.d.ts                  # TypeScript declarations
     │   ├── hooks/
-    │   │   └── useJarvis.ts               # WebSocket hook (auto-reconnect, streaming tokens, status polling)
+    │   │   └── useUltron.ts               # WebSocket hook (auto-reconnect, streaming tokens, status polling)
     │   └── components/
     │       ├── ChatArea.tsx               # Message display with markdown rendering
     │       ├── InputBox.tsx               # Text input + mode selector (Chat/Code/Research/RPA)
@@ -171,7 +171,7 @@ User Input (GUI/Web/Terminal)
 
 ## 5. AGENTS (3 Active + HITL Protection)
 
-### Coder Agent (`jarvis/v2/agents/coder.py`)
+### Coder Agent (`ultron/v2/agents/coder.py`)
 - **LLM:** Dedicated `qwen2.5-coder:7b` via Ollama (local)
 - **Capability:** Writes code → executes in sandbox → reads stack trace → auto-fixes → retries (max 5 iterations)
 - **Languages:** Python, JavaScript, TypeScript, and more
@@ -181,13 +181,13 @@ User Input (GUI/Web/Terminal)
   3. If error: read stderr → send to LLM → generate fix → retry
   4. Max 5 iterations before failure
 
-### Researcher Agent (`jarvis/v2/agents/researcher.py`)
+### Researcher Agent (`ultron/v2/agents/researcher.py`)
 - **LLM:** `qwen2.5:14b` via main router
 - **Capability:** Web search (DDGS) → URL fetching → content extraction → synthesis with citations
 - **Package:** `ddgs` (replacement for deprecated `duckduckgo_search`)
 - **Process:** Search → Read top 5 URLs → Synthesize findings
 
-### RPA Operator Agent (`jarvis/v2/agents/rpa_operator.py`)
+### RPA Operator Agent (`ultron/v2/agents/rpa_operator.py`)
 - **LLM:** `qwen2.5:14b` via main router
 - **Capabilities:**
   - Screen capture via `mss` (context manager for Windows TLS fix)
@@ -199,7 +199,7 @@ User Input (GUI/Web/Terminal)
 - **Two-Path Execution:**
   - **FAST PATH:** Direct app/website launch (no screenshot, instant) — detects keywords like "steam", "youtube", "sozluk"
   - **FULL PATH:** Screenshot → OCR → LLM planning → step-by-step execution with verification loop
-- **Focus Verification:** Before any keystroke, checks if screen shows `localhost`/`jarvis`/`517` → auto `alt+tab` if wrong window
+- **Focus Verification:** Before any keystroke, checks if screen shows `localhost`/`ultron`/`517` → auto `alt+tab` if wrong window
 - **Markdown Stripping:** Strips ``` blocks from LLM responses before JSON parsing
 
 ### Human-in-the-Loop (HITL)
@@ -207,7 +207,7 @@ User Input (GUI/Web/Terminal)
 - **RPA tasks with known targets:** Shows plan and asks for approval
 - **Unknown RPA tasks:** Falls through to full autonomous RPA loop (still requires HITL)
 
-## 6. MEMORY ENGINE (`jarvis/v2/memory/engine.py`)
+## 6. MEMORY ENGINE (`ultron/v2/memory/engine.py`)
 
 ### Three-Layer Memory
 1. **Vector DB (ChromaDB):** Semantic similarity search for tasks/outcomes
@@ -248,7 +248,7 @@ WebSocket Streaming → Browser
 - **StatusBadge.tsx:** Connection health indicator
 - **StreamingMessage.tsx:** Markdown + syntax highlighting for code blocks
 
-### WebSocket Hook (`useJarvis.ts`)
+### WebSocket Hook (`useUltron.ts`)
 - Auto-connect on mount
 - Auto-reconnect (max 10 attempts, 3s interval)
 - Token streaming via response buffer (avoids stale closure bug)
@@ -272,7 +272,7 @@ chromadb, networkx, sentence-transformers, psutil, pydantic, python-dotenv
 torch, torchaudio, edge-tts, pygame, sounddevice, soundfile, numpy
 ```
 
-### TypeScript/React (jarvis-desktop)
+### TypeScript/React (ultron-desktop)
 ```
 react, react-dom, typescript, vite, @vitejs/plugin-react
 tailwindcss, postcss, autoprefixer
@@ -316,8 +316,8 @@ model:
   language: "tr"
 ```
 
-### System Prompt (`jarvis/v2/core/prompt.txt`)
-- Identity: JARVIS v2.0 Multi-Agent
+### System Prompt (`ultron/v2/core/prompt.txt`)
+- Identity: ULTRON v2.0 Multi-Agent
 - Owner: Eren
 - Location: Windows 11, RTX 4080 Mobile (12GB VRAM), 32GB RAM
 - Language: MUTLAKA Türkçe cevap ver. İngilizce, Çince, başka dil KULLANMA.
@@ -332,26 +332,26 @@ start.bat
 
 ### Option B: Web GUI (React + FastAPI)
 ```bash
-start-jarvis-desktop.bat
+start-ultron-desktop.bat
 # Backend: http://localhost:8000
 # Frontend: http://localhost:5173
 ```
 
 ### Option C: Terminal (v2 Multi-Agent)
 ```bash
-python -m jarvis.v2.bootstrap
+python -m ultron.v2.bootstrap
 ```
 
 ### Option D: Terminal (Legacy Voice Pipeline)
 ```bash
-python -m jarvis.cli --cli
+python -m ultron.cli --cli
 ```
 
 ## 12. TESTING COMMANDS
 
 | Input | Expected Result |
 |-------|----------------|
-| `selam jarvis` | 🇹🇷 Turkish response, no Chinese characters |
+| `selam ultron` | 🇹🇷 Turkish response, no Chinese characters |
 | `İstanbul hava durumu` | 🌤 Browser opens weather |
 | `cpu durumu` | 🖥 CPU/RAM/Disk info |
 | `kod yaz fibonacci` | 💻 [0, 1, 1, 2, 3, 5, 8, 13, 21, 34] |
@@ -364,7 +364,7 @@ python -m jarvis.cli --cli
 ---
 
 **END OF ARCHITECTURE DOCUMENT**
-This document contains every component, file, dependency, fix, and workflow in the Jarvis v2.0 project. Give it to Gemini for full context awareness.
+This document contains every component, file, dependency, fix, and workflow in the Ultron v2.0 project. Give it to Gemini for full context awareness.
   
   
   

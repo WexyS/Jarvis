@@ -1,4 +1,4 @@
-# Jarvis Personal AI Assistant - Configuration Template
+# Ultron Personal AI Assistant - Configuration Template
 # Copy this file to config.yaml and fill in your values
 
 # Model configuration
@@ -37,8 +37,8 @@ email:
   # IMAP settings
   imap_server: "imap.gmail.com"
   imap_port: 993
-  imap_username: ""  # Set via env var JARVIS_EMAIL_USER
-  imap_password: ""  # Set via env var JARVIS_EMAIL_PASS
+  imap_username: ""  # Set via env var ULTRON_EMAIL_USER
+  imap_password: ""  # Set via env var ULTRON_EMAIL_PASS
   # Gmail API settings (if provider is "gmail_api")
   gmail_credentials_file: ""  # Path to OAuth credentials JSON
   # Max emails to read in briefing
@@ -117,4 +117,4 @@ memory:
 # Logging
 logging:
   level: "INFO"
-  file: "./data/jarvis.log"
+  file: "./data/ultron.log"

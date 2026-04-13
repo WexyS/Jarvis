@@ -141,7 +141,7 @@ Features | Pricing | Resources ▼ | Community ▼ | Login | [Start] [Free Trial
 - Accessibility skip link
 - Persistent bottom CTA banner
 
-## Key Takeaways for Jarvis GUI
+## Key Takeaways for Ultron GUI
 
 ### What Works Well
 1. ✅ **Clean, Minimal Design** - Focus on content, not chrome
@@ -191,4 +191,4 @@ Verdent.ai exemplifies modern SaaS landing page design with:
 - Clear workflow visualization
 - Multi-platform support
 
-This design philosophy aligns well with Jarvis's goals of providing a clean, efficient AI assistant interface.
+This design philosophy aligns well with Ultron's goals of providing a clean, efficient AI assistant interface.

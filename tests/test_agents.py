@@ -18,15 +18,15 @@ import pytest
 # Import all agents
 # ---------------------------------------------------------------------------
 
-from jarvis.v2.core.types import AgentRole, AgentStatus
-from jarvis.v2.agents.base import Agent
-from jarvis.v2.agents.coder import CoderAgent
-from jarvis.v2.agents.researcher import ResearcherAgent
-from jarvis.v2.agents.rpa_operator import RPAOperatorAgent
-from jarvis.v2.agents.clipboard_agent import ClipboardAgent
-from jarvis.v2.agents.sysmon_agent import SystemMonitorAgent
-from jarvis.v2.agents.meeting_agent import MeetingAgent
-from jarvis.v2.agents.files_agent import FilesAgent
+from ultron.v2.core.types import AgentRole, AgentStatus
+from ultron.v2.agents.base import Agent
+from ultron.v2.agents.coder import CoderAgent
+from ultron.v2.agents.researcher import ResearcherAgent
+from ultron.v2.agents.rpa_operator import RPAOperatorAgent
+from ultron.v2.agents.clipboard_agent import ClipboardAgent
+from ultron.v2.agents.sysmon_agent import SystemMonitorAgent
+from ultron.v2.agents.meeting_agent import MeetingAgent
+from ultron.v2.agents.files_agent import FilesAgent
 
 # ---------------------------------------------------------------------------
 # All concrete agent classes (excluding the abstract base)
@@ -78,7 +78,7 @@ class TestAgentImports:
 
     def test_agent_package_all(self) -> None:
         """Verify __all__ in agents package exports all agents."""
-        from jarvis.v2.agents import __all__
+        from ultron.v2.agents import __all__
         expected = {
             "Agent",
             "CoderAgent",

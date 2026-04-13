@@ -50,9 +50,9 @@ curl -X POST http://localhost:8000/api/v2/workspace/synthesize \
 ## n8n Integration
 
 3 webhook workflows ready to import:
-1. **Clone Trigger** — Webhook → Jarvis Clone API
-2. **Generate Trigger** — Webhook → Jarvis Generate API
-3. **Synthesize Trigger** — Webhook → Jarvis Synthesize API
+1. **Clone Trigger** — Webhook → Ultron Clone API
+2. **Generate Trigger** — Webhook → Ultron Generate API
+3. **Synthesize Trigger** — Webhook → Ultron Synthesize API
 
 Enable in `.env`:
 ```

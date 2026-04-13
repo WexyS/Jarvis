@@ -1,4 +1,4 @@
-# Jarvis v2.0 — Kullanım Kılavuzu
+# Ultron v2.0 — Kullanım Kılavuzu
 
 > **Son güncelleme:** 11 Nisan 2026
 > **Model:** Qwen 2.5 14B (yerel) + Claude Sonnet 4 (OpenRouter, ücretsiz)
@@ -9,11 +9,11 @@
 ## Hızlı Başlangıç
 
 ```bash
-cd C:\Users\nemes\Desktop\Jarvis
-python -m jarvis.cli
+cd C:\Users\nemes\Desktop\Ultron
+python -m ultron.cli
 ```
 
-Animasyonlu Mark-XXXV GUI açılır. Hem **sesli** hem **yazılı** iletişim kurabilirsin.
+Animasyonlu Mark-XXXX   GUI açılır. Hem **sesli** hem **yazılı** iletişim kurabilirsin.
 
 ---
 
@@ -21,7 +21,7 @@ Animasyonlu Mark-XXXV GUI açılır. Hem **sesli** hem **yazılı** iletişim ku
 
 ```
 ┌────────────────────────────────────────────────────────┐
-│  J.A.R.V.I.S         Qwen 2.5 14B + Claude            │
+│  Ultron         Qwen 2.5 14B + Claude            │
 │  Just A Rather Very Intelligent System                 │
 ├────────────────────────────────────────────────────────┤
 │          ╭──────────────────────────────╮              │
@@ -35,7 +35,7 @@ Animasyonlu Mark-XXXV GUI açılır. Hem **sesli** hem **yazılı** iletişim ku
 ├────────────────────────────────────────────────────────┤
 │  Log alanı:                                            │
 │  You: /code hackernews başlıklarını JSON kaydet       │
-│  Jarvis: [Python kodu yazıldı, çalıştırıldı]           │
+│  Ultron: [Python kodu yazıldı, çalıştırıldı]           │
 ├────────────────────────────────────────────────────────┤
 │  [Bir mesaj yazın...]        [GÖNDER ▸]                │
 │  [🎙 LIVE]                        [F4] SUSTUR           │
@@ -90,7 +90,7 @@ Animasyonlu Mark-XXXV GUI açılır. Hem **sesli** hem **yazılı** iletişim ku
 GUI'den bağımsız, daha güçlü mod:
 
 ```bash
-python -m jarvis.v2.bootstrap
+python -m ultron.v2.bootstrap
 ```
 
 ### Komut Prefixleri
@@ -107,18 +107,18 @@ python -m jarvis.v2.bootstrap
 
 ```
 You> /code Write a Python script that fetches titles from https://news.ycombinator.com/ and saves them to hn_titles.json
-Jarvis processing...
+Ultron processing...
 → Kod yazıldı: workspace/task_xxxxxxxx.py
 → Çalıştırıldı: Başarılı
 → Çıktı: Titles saved to hn_titles.json
 
 You> /research What are the latest developments in quantum computing?
-Jarvis processing...
+Ultron processing...
 → Web araması yapıldı, 5 kaynak okundu
 → Özet: [detaylı yanıt]
 
 You> /rpa Take a screenshot and read the text on screen
-Jarvis processing...
+Ultron processing...
 → Screenshot taken
 → OCR: "Notepad - Untitled"
 ```
@@ -162,7 +162,7 @@ OPENAI_API_KEY=sk-proj-xxxxx         # OpenAI fallback (opsiyonel)
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│                    JARVIS v2.0                            │
+│                    ULTRON v2.0                            │
 │                                                          │
 │  ┌────────────────────────────────────────────────────┐ │
 │  │  GUI (Mark-XXXV) + Voice Pipeline                   │ │
@@ -196,11 +196,11 @@ OPENAI_API_KEY=sk-proj-xxxxx         # OpenAI fallback (opsiyonel)
 
 | Komut | Açıklama |
 |-------|----------|
-| `python -m jarvis.cli --list-mics` | Mikrofonları listele |
-| `python -m jarvis.cli --test-mic` | Mikrofonu test et |
-| `python -m jarvis.v2.bootstrap --status` | v2 sistem durumu |
-| `python -m jarvis.v2.bootstrap --test-coder` | Coder Agent test |
-| `python -m jarvis.v2.bootstrap --test-rpa` | RPA Agent test |
+| `python -m ultron.cli --list-mics` | Mikrofonları listele |
+| `python -m ultron.cli --test-mic` | Mikrofonu test et |
+| `python -m ultron.v2.bootstrap --status` | v2 sistem durumu |
+| `python -m ultron.v2.bootstrap --test-coder` | Coder Agent test |
+| `python -m ultron.v2.bootstrap --test-rpa` | RPA Agent test |
 | `ollama ls` | Yüklü modelleri listele |
 
 ---
@@ -221,9 +221,9 @@ model:
 
 | Değişken | Açıklama |
 |----------|----------|
-| `JARVIS_MODEL` | Varsayılan model (`qwen2.5:14b`) |
-| `JARVIS_STT` | STT motoru: `google` veya `whisper` |
-| `JARVIS_TTS_VOICE` | TTS sesi (`tr-TR-EmelNeural`) |
+| `ULTRON_MODEL` | Varsayılan model (`qwen2.5:14b`) |
+| `ULTRON_STT` | STT motoru: `google` veya `whisper` |
+| `ULTRON_TTS_VOICE` | TTS sesi (`tr-TR-EmelNeural`) |
 | `OPENROUTER_API_KEY` | OpenRouter API key |
 | `OLLAMA_BASE_URL` | Ollama sunucu (`http://localhost:11434`) |
 
@@ -248,8 +248,8 @@ pip install edge-tts pygame
 
 ### Mikrofon algılanmıyor
 ```bash
-python -m jarvis.cli --list-mics
-python -m jarvis.cli --test-mic
+python -m ultron.cli --list-mics
+python -m ultron.cli --test-mic
 ```
 
 ### "No LLM providers available" hatası
@@ -271,8 +271,8 @@ Sistem otomatik olarak yerel Ollama modeline fallback yapar. Manuel kredi yükle
 
 | İşlem | Komut |
 |-------|-------|
-| **GUI Başlat** | `python -m jarvis.cli` |
-| **v2 Terminal** | `python -m jarvis.v2.bootstrap` |
+| **GUI Başlat** | `python -m ultron.cli` |
+| **v2 Terminal** | `python -m ultron.v2.bootstrap` |
 | **Kapat** | X butonu / `/quit` |
 | **Sustur** | F4 veya 🎙 butonu |
 | **Model Değiştir** | `config.yaml` → `ollama_model` |
@@ -283,8 +283,8 @@ Sistem otomatik olarak yerel Ollama modeline fallback yapar. Manuel kredi yükle
 ## 📁 Proje Yapısı
 
 ```
-Jarvis/
-├── jarvis/
+Ultron/
+├── ultron/
 │   ├── cli.py              # CLI entry point (GUI başlatır)
 │   ├── gui_app.py          # Mark-XXXV Tkinter GUI
 │   ├── config.py           # Yapılandırma (Pydantic)
@@ -311,7 +311,7 @@ Jarvis/
 ├── config.yaml
 ├── .env
 ├── pyproject.toml
-└── jarvis_auto_patcher.py   # Otomatik hata düzeltme
+└── ultron_auto_patcher.py   # Otomatik hata düzeltme
 ```
 
 ---
@@ -326,4 +326,4 @@ Jarvis/
 | 11.04.2026 | GUI + v2 orchestrator bağlandı |
 | 11.04.2026 | qwen3.5:27b → qwen2.5:14b (12GB VRAM uyumlu) |
 | 11.04.2026 | Hermes TAO loop entegrasyonu |
-| 11.04.2026 | jarvis_auto_patcher.py eklendi |
+| 11.04.2026 | ultron_auto_patcher.py eklendi |

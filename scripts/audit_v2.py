@@ -1,8 +1,8 @@
-"""Deep code audit for Jarvis v2 project."""
+"""Deep code audit for Ultron v2 project."""
 import ast, sys
 from pathlib import Path
 
-root = Path("jarvis/v2")
+root = Path("ultron/v2")
 files = sorted(root.rglob("*.py"))
 
 issues = []

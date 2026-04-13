@@ -1,9 +1,9 @@
 @echo off
-title J.A.R.V.I.S v2.1 — CLI Launcher
+title Ultron v2.1 — CLI Launcher
 color 0A
 echo.
 echo ============================================================
-echo  J.A.R.V.I.S v2.1 — Personal AI Assistant (CLI)
+echo  Ultron v2.1 — Personal AI Assistant (CLI)
 echo  Multi-Agent | Self-Healing | 13 AI Providers | Voice
 echo ============================================================
 echo.
@@ -44,8 +44,8 @@ if %errorlevel% neq 0 (
 )
 
 :: Launch CLI
-echo [4/4] Starting Jarvis CLI...
+echo [4/4] Starting Ultron CLI...
 echo.
-python -m jarvis.cli --cli
+python -m ultron.cli --cli
 echo.
 pause
