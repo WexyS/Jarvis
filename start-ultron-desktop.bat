@@ -24,8 +24,9 @@ if exist "%~dp0.venv\Scripts\activate.bat" (
 :: [2/4] Backend baslat
 :: BUG #1 DUZELTME: eksik kapanış tırnak eklendi
 :: BUG #2 DUZELTME: --host 0.0.0.0 -> 127.0.0.1 (guvenlik)
+:: BUG #4 DUZELTME: python -> .venv\Scripts\python.exe (PATH sorunu)
 echo [2/4] Starting FastAPI Backend (port 8000)...
-start "Ultron Backend" cmd /k "cd /d %~dp0 && call .venv\Scripts\activate.bat && python -m uvicorn ultron.api.main:app --host 127.0.0.1 --port 8000"
+start "Ultron Backend" cmd /k "cd /d %~dp0 && call .venv\Scripts\activate.bat && .venv\Scripts\python.exe -m uvicorn ultron.api.main:app --host 127.0.0.1 --port 8000"
 
 :: [3/4] Health check
 :: BUG #3 DUZELTME: kör timeout -> curl dongusu (race condition)

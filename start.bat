@@ -46,6 +46,6 @@ if %errorlevel% neq 0 (
 :: Launch CLI
 echo [4/4] Starting Ultron CLI...
 echo.
-python -m ultron.cli --cli
+"%~dp0.venv\Scripts\python.exe" -m ultron.cli --cli
 echo.
 pause
