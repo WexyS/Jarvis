@@ -109,7 +109,7 @@ export default function ChatArea({
     <div
       ref={chatContainerRef}
       className="flex-1 overflow-y-auto scroll-smooth"
-      style={{ backgroundColor: 'var(--color-bg)' }}
+      style={{ backgroundColor: 'rgb(var(--color-bg))' }}
     >
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {messages.length === 0 && !currentResponse ? (
@@ -124,7 +124,7 @@ export default function ChatArea({
               <motion.div 
                 className="w-32 h-32 rounded-3xl flex items-center justify-center"
                 style={{ 
-                  background: 'linear-gradient(135deg, var(--color-accent), #4f46e5)',
+                  background: 'linear-gradient(135deg, rgb(var(--color-accent)), #4f46e5)',
                   boxShadow: '0 20px 60px rgba(99, 102, 241, 0.3)'
                 }}
                 animate={{ 
@@ -158,7 +158,7 @@ export default function ChatArea({
               transition={{ delay: 0.2 }}
               className="text-4xl font-bold mb-3"
               style={{ 
-                background: 'linear-gradient(135deg, var(--color-text), var(--color-accent))',
+                background: 'linear-gradient(135deg, rgb(var(--color-text)), rgb(var(--color-accent)))',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent'
               }}
@@ -170,7 +170,7 @@ export default function ChatArea({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               className="max-w-lg text-lg mb-8"
-              style={{ color: 'var(--color-text-secondary)' }}
+              style={{ color: 'rgb(var(--color-text-secondary))' }}
             >
               Your advanced multi-agent AI assistant. Ask questions, write code, conduct research, and automate tasks.
             </motion.p>
@@ -196,13 +196,13 @@ export default function ChatArea({
                   whileHover={{ scale: 1.05, y: -2 }}
                   className="p-4 rounded-xl border cursor-pointer transition-all"
                   style={{ 
-                    backgroundColor: 'var(--color-card)', 
-                    borderColor: 'var(--color-border)'
+                    backgroundColor: 'rgb(var(--color-card))', 
+                    borderColor: 'rgb(var(--color-border))'
                   }}
                 >
                   <div className="text-2xl mb-2">{item.icon}</div>
-                  <div className="font-semibold text-sm" style={{ color: 'var(--color-text)' }}>{item.title}</div>
-                  <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>{item.desc}</div>
+                  <div className="font-semibold text-sm" style={{ color: 'rgb(var(--color-text))' }}>{item.title}</div>
+                  <div className="text-xs" style={{ color: 'rgb(var(--color-text-muted))' }}>{item.desc}</div>
                 </motion.div>
               ))}
             </motion.div>
@@ -213,7 +213,7 @@ export default function ChatArea({
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
               className="mt-12 flex items-center gap-2 text-xs"
-              style={{ color: 'var(--color-text-muted)' }}
+              style={{ color: 'rgb(var(--color-text-muted))' }}
             >
               <Zap className="w-3 h-3" />
               <span>Powered by {model}</span>
@@ -239,7 +239,7 @@ export default function ChatArea({
                       <div className="flex-shrink-0">
                         <div 
                           className="w-9 h-9 rounded-xl flex items-center justify-center"
-                          style={{ background: 'linear-gradient(135deg, var(--color-accent), #4f46e5)' }}
+                          style={{ background: 'linear-gradient(135deg, rgb(var(--color-accent)), #4f46e5)' }}
                         >
                           <Bot className="w-5 h-5 text-white" strokeWidth={1.5} />
                         </div>
@@ -256,13 +256,13 @@ export default function ChatArea({
                         }`}
                         style={{
                           backgroundColor: msg.role === 'user' 
-                            ? 'var(--color-accent)' 
-                            : 'var(--color-card)',
-                          border: `1px solid ${msg.role === 'user' ? 'transparent' : 'var(--color-border)'}`
+                            ? 'rgb(var(--color-accent))' 
+                            : 'rgb(var(--color-card))',
+                          border: `1px solid ${msg.role === 'user' ? 'transparent' : 'rgb(var(--color-border))'}`
                         }}
                       >
                         <div className="prose prose-sm max-w-none" style={{ 
-                          color: msg.role === 'user' ? 'white' : 'var(--color-text)'
+                          color: msg.role === 'user' ? 'white' : 'rgb(var(--color-text))'
                         }}>
                           {msg.role === 'user' ? (
                             <p className="whitespace-pre-wrap">{msg.content}</p>
@@ -281,7 +281,7 @@ export default function ChatArea({
                         } opacity-0 group-hover:opacity-100 transition-opacity`}
                       >
                         {/* Timestamp */}
-                        <div className="flex items-center gap-1 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                        <div className="flex items-center gap-1 text-xs" style={{ color: 'rgb(var(--color-text-muted))' }}>
                           <Clock className="w-3 h-3" />
                           <span>{formatTimestamp(msg.timestamp)}</span>
                         </div>
@@ -297,7 +297,7 @@ export default function ChatArea({
                               {copiedId === idx ? (
                                 <Check className="w-3.5 h-3.5 text-green-500" />
                               ) : (
-                                <Copy className="w-3.5 h-3.5" style={{ color: 'var(--color-text-muted)' }} />
+                                <Copy className="w-3.5 h-3.5" style={{ color: 'rgb(var(--color-text-muted))' }} />
                               )}
                             </button>
 
@@ -306,7 +306,7 @@ export default function ChatArea({
                               className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                               title="Regenerate response"
                             >
-                              <RotateCcw className="w-3.5 h-3.5" style={{ color: 'var(--color-text-muted)' }} />
+                              <RotateCcw className="w-3.5 h-3.5" style={{ color: 'rgb(var(--color-text-muted))' }} />
                             </button>
 
                             {/* TTS Button */}
@@ -318,7 +318,7 @@ export default function ChatArea({
                               {speakingId === idx ? (
                                 <VolumeX className="w-3.5 h-3.5 text-ultron-primary" />
                               ) : (
-                                <Volume2 className="w-3.5 h-3.5" style={{ color: 'var(--color-text-muted)' }} />
+                                <Volume2 className="w-3.5 h-3.5" style={{ color: 'rgb(var(--color-text-muted))' }} />
                               )}
                             </button>
 
@@ -335,7 +335,7 @@ export default function ChatArea({
                               >
                                 <ThumbsUp className={`w-3.5 h-3.5 ${
                                   feedbackGiven[idx] === 'up' ? 'text-green-500' : ''
-                                }`} style={{ color: feedbackGiven[idx] === 'up' ? undefined : 'var(--color-text-muted)' }} />
+                                }`} style={{ color: feedbackGiven[idx] === 'up' ? undefined : 'rgb(var(--color-text-muted))' }} />
                               </button>
                               <button
                                 onClick={() => handleFeedback(idx, 'down')}
@@ -348,7 +348,7 @@ export default function ChatArea({
                               >
                                 <ThumbsDown className={`w-3.5 h-3.5 ${
                                   feedbackGiven[idx] === 'down' ? 'text-red-500' : ''
-                                }`} style={{ color: feedbackGiven[idx] === 'down' ? undefined : 'var(--color-text-muted)' }} />
+                                }`} style={{ color: feedbackGiven[idx] === 'down' ? undefined : 'rgb(var(--color-text-muted))' }} />
                               </button>
                             </div>
                           </>
@@ -381,7 +381,7 @@ export default function ChatArea({
               >
                 <div 
                   className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: 'linear-gradient(135deg, var(--color-accent), #4f46e5)' }}
+                  style={{ background: 'linear-gradient(135deg, rgb(var(--color-accent)), #4f46e5)' }}
                 >
                   <Bot className="w-5 h-5 text-white" strokeWidth={1.5} />
                 </div>
@@ -389,16 +389,16 @@ export default function ChatArea({
                   <div
                     className="rounded-2xl rounded-bl-md px-5 py-3.5"
                     style={{ 
-                      backgroundColor: 'var(--color-card)',
-                      border: '1px solid var(--color-border)'
+                      backgroundColor: 'rgb(var(--color-card))',
+                      border: '1px solid rgb(var(--color-border))'
                     }}
                   >
-                    <div className="prose prose-sm max-w-none" style={{ color: 'var(--color-text)' }}>
+                    <div className="prose prose-sm max-w-none" style={{ color: 'rgb(var(--color-text))' }}>
                       <StreamingMessage content={currentResponse} isStreaming={true} />
                     </div>
                   </div>
                   {/* Streaming indicator */}
-                  <div className="flex items-center gap-2 mt-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                  <div className="flex items-center gap-2 mt-2 text-xs" style={{ color: 'rgb(var(--color-text-muted))' }}>
                     <motion.div
                       animate={{ opacity: [0.3, 1, 0.3] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
@@ -419,7 +419,7 @@ export default function ChatArea({
               >
                 <div 
                   className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: 'linear-gradient(135deg, var(--color-accent), #4f46e5)' }}
+                  style={{ background: 'linear-gradient(135deg, rgb(var(--color-accent)), #4f46e5)' }}
                 >
                   <Bot className="w-5 h-5 text-white" strokeWidth={1.5} />
                 </div>
@@ -427,8 +427,8 @@ export default function ChatArea({
                   <div
                     className="rounded-2xl rounded-bl-md px-5 py-6"
                     style={{ 
-                      backgroundColor: 'var(--color-card)',
-                      border: '1px solid var(--color-border)'
+                      backgroundColor: 'rgb(var(--color-card))',
+                      border: '1px solid rgb(var(--color-border))'
                     }}
                   >
                     {/* Typing animation */}
@@ -437,7 +437,7 @@ export default function ChatArea({
                         <motion.div
                           key={i}
                           className="w-2.5 h-2.5 rounded-full"
-                          style={{ backgroundColor: 'var(--color-accent)' }}
+                          style={{ backgroundColor: 'rgb(var(--color-accent))' }}
                           animate={{ y: [0, -8, 0] }}
                           transition={{ 
                             duration: 0.6, 

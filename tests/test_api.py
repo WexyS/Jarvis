@@ -22,6 +22,41 @@ _START_TIME = time.time()
 _test_orchestrator: Optional[object] = None  # Simulates "no orchestrator"
 
 
+class _FakeLLMRouter:
+    def get_status(self) -> dict:
+        return {
+            "ollama": {
+                "available": True,
+                "model": "qwen2.5:14b",
+                "stats": {
+                    "avg_latency_ms": "12ms",
+                    "health_score": "1.00",
+                },
+            }
+        }
+
+
+class _FakeOrchestrator:
+    def __init__(self) -> None:
+        self._running = True
+        self.llm_router = _FakeLLMRouter()
+
+    def get_status(self) -> dict:
+        return {
+            "running": True,
+            "agents": {
+                "coder": {
+                    "status": "idle",
+                    "tasks_completed": 2,
+                    "tasks_failed": 0,
+                }
+            },
+            "llm_providers": self.llm_router.get_status(),
+            "memory": {"vector_entries": 5},
+            "event_bus_events": 0,
+        }
+
+
 def _build_test_app() -> FastAPI:
     """Build a minimal FastAPI app that mirrors the real endpoint shapes."""
 
@@ -57,6 +92,15 @@ def _build_test_app() -> FastAPI:
     async def openapi():
         return app.openapi()
 
+    return app
+
+
+def _build_status_router_app() -> FastAPI:
+    """Build a lightweight app that mounts the real status router."""
+    from ultron.api.routes.status import router as status_router
+
+    app = FastAPI(title="Ultron Status Router (test)", version="2.1.0")
+    app.include_router(status_router)
     return app
 
 
@@ -165,3 +209,79 @@ class TestAppCreation:
         data1 = resp1.json()
         data2 = resp2.json()
         assert data1["version"] == data2["version"]
+
+
+class TestV2StatusAndProvidersAliases:
+    """Regression tests for /api/v2/status and /api/v2/providers aliases."""
+
+    @pytest.mark.asyncio
+    async def test_v2_status_alias_returns_consistent_shape_when_degraded(self, monkeypatch) -> None:
+        """Both /status and /api/v2/status should exist and include uptime_seconds."""
+        import ultron.api.main as api_main
+
+        async def _fake_get_orchestrator_none():
+            return None
+
+        monkeypatch.setattr(api_main, "get_orchestrator", _fake_get_orchestrator_none)
+        monkeypatch.setattr(api_main, "START_TIME", time.time() - 5)
+
+        app = _build_status_router_app()
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            v1 = await client.get("/status")
+            v2 = await client.get("/api/v2/status")
+
+        assert v1.status_code == 200
+        assert v2.status_code == 200
+
+        for payload in (v1.json(), v2.json()):
+            assert payload["running"] is False
+            assert "agents" in payload
+            assert "llm_providers" in payload
+            assert "memory" in payload
+            assert "uptime_seconds" in payload
+            assert isinstance(payload["uptime_seconds"], (int, float))
+
+    @pytest.mark.asyncio
+    async def test_v2_providers_alias_returns_provider_map_when_running(self, monkeypatch) -> None:
+        """Both /providers and /api/v2/providers should return provider maps."""
+        import ultron.api.main as api_main
+
+        fake_orchestrator = _FakeOrchestrator()
+
+        async def _fake_get_orchestrator():
+            return fake_orchestrator
+
+        monkeypatch.setattr(api_main, "get_orchestrator", _fake_get_orchestrator)
+
+        app = _build_status_router_app()
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            v1 = await client.get("/providers")
+            v2 = await client.get("/api/v2/providers")
+
+        assert v1.status_code == 200
+        assert v2.status_code == 200
+
+        for payload in (v1.json(), v2.json()):
+            assert isinstance(payload, dict)
+            assert "ollama" in payload
+            assert payload["ollama"]["available"] is True
+
+    @pytest.mark.asyncio
+    async def test_v2_providers_alias_returns_empty_map_when_degraded(self, monkeypatch) -> None:
+        """/api/v2/providers should return a stable dict type even when orchestrator is absent."""
+        import ultron.api.main as api_main
+
+        async def _fake_get_orchestrator_none():
+            return None
+
+        monkeypatch.setattr(api_main, "get_orchestrator", _fake_get_orchestrator_none)
+
+        app = _build_status_router_app()
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            response = await client.get("/api/v2/providers")
+
+        assert response.status_code == 200
+        assert response.json() == {}

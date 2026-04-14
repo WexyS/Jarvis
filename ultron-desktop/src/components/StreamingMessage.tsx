@@ -64,11 +64,11 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
   const languageLabel = language || 'text';
 
   return (
-    <div className="my-4 rounded-lg overflow-hidden border" style={{ borderColor: 'var(--color-border)' }}>
+    <div className="my-4 rounded-lg overflow-hidden border" style={{ borderColor: 'rgb(var(--color-border))' }}>
       {/* Code Header */}
       <div className="flex items-center justify-between px-4 py-2 text-xs" style={{ 
-        backgroundColor: 'var(--color-panel)',
-        color: 'var(--color-text-muted)'
+        backgroundColor: 'rgb(var(--color-panel))',
+        color: 'rgb(var(--color-text-muted))'
       }}>
         <div className="flex items-center gap-2">
           {language === 'javascript' || language === 'typescript' ? (
@@ -123,7 +123,7 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
             padding: '1rem',
             fontSize: '0.875rem',
             lineHeight: '1.5',
-            backgroundColor: 'var(--color-bg)',
+            backgroundColor: 'rgb(var(--color-bg))',
           }}
           showLineNumbers
           wrapLines
@@ -141,9 +141,9 @@ function CodeBlock({ language, code }: { language: string; code: string }) {
             exit={{ height: 0, opacity: 0 }}
             className="border-t px-4 py-3 text-sm font-mono whitespace-pre-wrap"
             style={{ 
-              backgroundColor: 'var(--color-panel)',
-              borderColor: 'var(--color-border)',
-              color: output.startsWith('❌') ? '#ef4444' : output.startsWith('✅') ? '#10b981' : 'var(--color-text)'
+              backgroundColor: 'rgb(var(--color-panel))',
+              borderColor: 'rgb(var(--color-border))',
+              color: output.startsWith('❌') ? '#ef4444' : output.startsWith('✅') ? '#10b981' : 'rgb(var(--color-text))'
             }}
           >
             {output}
@@ -170,7 +170,7 @@ export default function StreamingMessage({ content, isStreaming = false }: Strea
 
       return (
         <code className={className} style={{
-          backgroundColor: 'var(--color-panel)',
+          backgroundColor: 'rgb(var(--color-panel))',
           padding: '0.2em 0.4em',
           borderRadius: '0.25rem',
           fontSize: '0.875em',
@@ -182,61 +182,61 @@ export default function StreamingMessage({ content, isStreaming = false }: Strea
     },
     pre: ({ children }: any) => <>{children}</>,
     h1: ({ children }: any) => (
-      <h1 className="text-2xl font-bold mt-6 mb-3" style={{ color: 'var(--color-text)' }}>{children}</h1>
+      <h1 className="text-2xl font-bold mt-6 mb-3" style={{ color: 'rgb(var(--color-text))' }}>{children}</h1>
     ),
     h2: ({ children }: any) => (
-      <h2 className="text-xl font-bold mt-5 mb-2" style={{ color: 'var(--color-text)' }}>{children}</h2>
+      <h2 className="text-xl font-bold mt-5 mb-2" style={{ color: 'rgb(var(--color-text))' }}>{children}</h2>
     ),
     h3: ({ children }: any) => (
-      <h3 className="text-lg font-bold mt-4 mb-2" style={{ color: 'var(--color-text)' }}>{children}</h3>
+      <h3 className="text-lg font-bold mt-4 mb-2" style={{ color: 'rgb(var(--color-text))' }}>{children}</h3>
     ),
     p: ({ children }: any) => (
-      <p className="mb-3 leading-relaxed" style={{ color: 'var(--color-text)' }}>{children}</p>
+      <p className="mb-3 leading-relaxed" style={{ color: 'rgb(var(--color-text))' }}>{children}</p>
     ),
     ul: ({ children }: any) => (
-      <ul className="list-disc pl-6 mb-3 space-y-1" style={{ color: 'var(--color-text)' }}>{children}</ul>
+      <ul className="list-disc pl-6 mb-3 space-y-1" style={{ color: 'rgb(var(--color-text))' }}>{children}</ul>
     ),
     ol: ({ children }: any) => (
-      <ol className="list-decimal pl-6 mb-3 space-y-1" style={{ color: 'var(--color-text)' }}>{children}</ol>
+      <ol className="list-decimal pl-6 mb-3 space-y-1" style={{ color: 'rgb(var(--color-text))' }}>{children}</ol>
     ),
     li: ({ children }: any) => (
-      <li className="mb-1" style={{ color: 'var(--color-text)' }}>{children}</li>
+      <li className="mb-1" style={{ color: 'rgb(var(--color-text))' }}>{children}</li>
     ),
     blockquote: ({ children }: any) => (
       <blockquote className="border-l-4 pl-4 py-2 my-3 italic" style={{ 
-        borderColor: 'var(--color-accent)',
-        color: 'var(--color-text-secondary)',
-        backgroundColor: 'var(--color-panel)'
+        borderColor: 'rgb(var(--color-accent))',
+        color: 'rgb(var(--color-text-secondary))',
+        backgroundColor: 'rgb(var(--color-panel))'
       }}>
         {children}
       </blockquote>
     ),
     table: ({ children }: any) => (
       <div className="overflow-x-auto my-4">
-        <table className="min-w-full border-collapse border" style={{ borderColor: 'var(--color-border)' }}>
+        <table className="min-w-full border-collapse border" style={{ borderColor: 'rgb(var(--color-border))' }}>
           {children}
         </table>
       </div>
     ),
     th: ({ children }: any) => (
       <th className="border px-3 py-2 font-semibold" style={{ 
-        backgroundColor: 'var(--color-panel)',
-        borderColor: 'var(--color-border)',
-        color: 'var(--color-text)'
+        backgroundColor: 'rgb(var(--color-panel))',
+        borderColor: 'rgb(var(--color-border))',
+        color: 'rgb(var(--color-text))'
       }}>
         {children}
       </th>
     ),
     td: ({ children }: any) => (
       <td className="border px-3 py-2" style={{ 
-        borderColor: 'var(--color-border)',
-        color: 'var(--color-text)'
+        borderColor: 'rgb(var(--color-border))',
+        color: 'rgb(var(--color-text))'
       }}>
         {children}
       </td>
     ),
     a: ({ href, children }: any) => (
-      <a href={href} className="underline hover:opacity-80" style={{ color: 'var(--color-accent)' }} target="_blank" rel="noopener noreferrer">
+      <a href={href} className="underline hover:opacity-80" style={{ color: 'rgb(var(--color-accent))' }} target="_blank" rel="noopener noreferrer">
         {children}
       </a>
     ),
@@ -257,7 +257,7 @@ export default function StreamingMessage({ content, isStreaming = false }: Strea
           animate={{ opacity: [1, 0] }}
           transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
           className="inline-block w-0.5 h-5 ml-0.5 align-middle"
-          style={{ backgroundColor: 'var(--color-accent)' }}
+          style={{ backgroundColor: 'rgb(var(--color-accent))' }}
         />
       )}
     </div>

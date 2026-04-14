@@ -112,21 +112,22 @@ export default function ConversationSidebar({
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed left-0 top-0 bottom-0 w-80 z-40 flex flex-col"
             style={{
-              backgroundColor: 'var(--color-panel)',
-              borderRight: '1px solid var(--color-border)'
+              backgroundColor: 'rgb(var(--color-panel))',
+              borderRight: '1px solid rgb(var(--color-border))'
             }}
           >
             {/* Header */}
-            <div className="p-4 border-b" style={{ borderColor: 'var(--color-border)' }}>
+            <div className="p-4 border-b" style={{ borderColor: 'rgb(var(--color-border))' }}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold" style={{ color: 'var(--color-text)' }}>
+                <h2 className="text-lg font-bold" style={{ color: 'rgb(var(--color-text))' }}>
                   Conversations
                 </h2>
                 <button
                   onClick={onClose}
+                  title="Konuşma panelini kapat"
                   className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 >
-                  <X className="w-5 h-5" style={{ color: 'var(--color-text-muted)' }} />
+                  <X className="w-5 h-5" style={{ color: 'rgb(var(--color-text-muted))' }} />
                 </button>
               </div>
 
@@ -135,7 +136,7 @@ export default function ConversationSidebar({
                 onClick={onNewConversation}
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all hover:scale-105"
                 style={{ 
-                  background: 'linear-gradient(135deg, var(--color-accent), #4f46e5)',
+                  background: 'linear-gradient(135deg, rgb(var(--color-accent)), #4f46e5)',
                   color: 'white',
                   boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
                 }}
@@ -146,17 +147,18 @@ export default function ConversationSidebar({
 
               {/* Search Input */}
               <div className="mt-3 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--color-text-muted)' }} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'rgb(var(--color-text-muted))' }} />
                 <input
                   type="text"
                   placeholder="Search conversations..."
+                  title="Konuşmalarda ara"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 rounded-lg text-sm border transition-colors focus:outline-none focus:ring-2 focus:ring-ultron-primary/50"
                   style={{ 
-                    backgroundColor: 'var(--color-bg)',
-                    borderColor: 'var(--color-border)',
-                    color: 'var(--color-text)'
+                    backgroundColor: 'rgb(var(--color-bg))',
+                    borderColor: 'rgb(var(--color-border))',
+                    color: 'rgb(var(--color-text))'
                   }}
                 />
               </div>
@@ -167,7 +169,7 @@ export default function ConversationSidebar({
               {Object.entries(groupedConversations).map(([group, convs]) => (
                 <div key={group} className="mb-2">
                   {/* Group Header */}
-                  <div className="px-4 py-2 text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--color-text-muted)' }}>
+                  <div className="px-4 py-2 text-xs font-semibold uppercase tracking-wide" style={{ color: 'rgb(var(--color-text-muted))' }}>
                     {group}
                   </div>
 
@@ -179,7 +181,7 @@ export default function ConversationSidebar({
                         conv.id === activeConversationId ? 'ring-2 ring-ultron-primary' : 'hover:bg-gray-100/50 dark:hover:bg-gray-800/50'
                       }`}
                       style={{ 
-                        backgroundColor: conv.id === activeConversationId ? 'var(--color-bg)' : 'transparent'
+                        backgroundColor: conv.id === activeConversationId ? 'rgb(var(--color-bg))' : 'transparent'
                       }}
                       onClick={() => onSelectConversation(conv.id)}
                     >
@@ -191,22 +193,24 @@ export default function ConversationSidebar({
                               type="text"
                               value={editingTitle}
                               onChange={(e) => setEditingTitle(e.target.value)}
+                              title="Konuşma başlığını düzenle"
+                              placeholder="Yeni başlık"
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') handleSaveEdit();
                                 if (e.key === 'Escape') handleCancelEdit();
                               }}
                               className="flex-1 px-2 py-1 text-sm rounded border focus:outline-none focus:ring-2 focus:ring-ultron-primary/50"
                               style={{ 
-                                backgroundColor: 'var(--color-bg)',
-                                borderColor: 'var(--color-border)',
-                                color: 'var(--color-text)'
+                                backgroundColor: 'rgb(var(--color-bg))',
+                                borderColor: 'rgb(var(--color-border))',
+                                color: 'rgb(var(--color-text))'
                               }}
                               autoFocus
                             />
-                            <button onClick={handleSaveEdit} className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                            <button onClick={handleSaveEdit} title="Başlığı kaydet" className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
                               <Check className="w-4 h-4 text-green-500" />
                             </button>
-                            <button onClick={handleCancelEdit} className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
+                            <button onClick={handleCancelEdit} title="Düzenlemeyi iptal et" className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded">
                               <X className="w-4 h-4 text-red-500" />
                             </button>
                           </div>
@@ -214,8 +218,8 @@ export default function ConversationSidebar({
                           <>
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex items-center gap-2 flex-1 min-w-0">
-                                <MessageSquare className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--color-text-muted)' }} />
-                                <span className="text-sm font-medium truncate" style={{ color: 'var(--color-text)' }}>
+                                <MessageSquare className="w-4 h-4 flex-shrink-0" style={{ color: 'rgb(var(--color-text-muted))' }} />
+                                <span className="text-sm font-medium truncate" style={{ color: 'rgb(var(--color-text))' }}>
                                   {conv.title}
                                 </span>
                               </div>
@@ -226,14 +230,15 @@ export default function ConversationSidebar({
                                   e.stopPropagation();
                                   setShowMenuId(showMenuId === conv.id ? null : conv.id);
                                 }}
+                                title="Konuşma seçenekleri"
                                 className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-opacity"
                               >
-                                <MoreVertical className="w-4 h-4" style={{ color: 'var(--color-text-muted)' }} />
+                                <MoreVertical className="w-4 h-4" style={{ color: 'rgb(var(--color-text-muted))' }} />
                               </button>
                             </div>
 
                             {/* Metadata */}
-                            <div className="flex items-center gap-3 mt-1.5 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                            <div className="flex items-center gap-3 mt-1.5 text-xs" style={{ color: 'rgb(var(--color-text-muted))' }}>
                               <div className="flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 <span>{formatTime(conv.updatedAt)}</span>
@@ -256,14 +261,14 @@ export default function ConversationSidebar({
                             exit={{ opacity: 0, scale: 0.95 }}
                             className="absolute right-2 top-12 w-36 rounded-lg shadow-lg overflow-hidden z-10"
                             style={{ 
-                              backgroundColor: 'var(--color-card)',
-                              border: '1px solid var(--color-border)'
+                              backgroundColor: 'rgb(var(--color-card))',
+                              border: '1px solid rgb(var(--color-border))'
                             }}
                           >
                             <button
                               onClick={() => handleStartEdit(conv)}
                               className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                              style={{ color: 'var(--color-text)' }}
+                              style={{ color: 'rgb(var(--color-text))' }}
                             >
                               <Edit2 className="w-3.5 h-3.5" />
                               <span>Rename</span>
@@ -286,11 +291,11 @@ export default function ConversationSidebar({
               {/* Empty State */}
               {filteredConversations.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <MessageSquare className="w-12 h-12 mb-3" style={{ color: 'var(--color-text-muted)' }} />
-                  <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+                  <MessageSquare className="w-12 h-12 mb-3" style={{ color: 'rgb(var(--color-text-muted))' }} />
+                  <p className="text-sm font-medium" style={{ color: 'rgb(var(--color-text))' }}>
                     {searchQuery ? 'No conversations found' : 'No conversations yet'}
                   </p>
-                  <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                  <p className="text-xs mt-1" style={{ color: 'rgb(var(--color-text-muted))' }}>
                     {searchQuery ? 'Try a different search' : 'Start a new chat to begin'}
                   </p>
                 </div>
@@ -299,8 +304,8 @@ export default function ConversationSidebar({
 
             {/* Footer Stats */}
             <div className="p-4 border-t text-xs" style={{ 
-              borderColor: 'var(--color-border)',
-              color: 'var(--color-text-muted)'
+              borderColor: 'rgb(var(--color-border))',
+              color: 'rgb(var(--color-text-muted))'
             }}>
               <div className="flex items-center justify-between">
                 <span>{conversations.length} conversations</span>

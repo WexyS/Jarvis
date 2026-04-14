@@ -13,6 +13,65 @@ export interface StreamChunk {
   metadata: Record<string, any>;
 }
 
+interface ProviderEntry {
+  available?: boolean;
+  latency_ms?: number | string;
+  stats?: {
+    avg_latency_ms?: number | string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
+export interface ProvidersState {
+  current: { name: string; latency_ms: number } | null;
+  available: string[];
+  details: Record<string, ProviderEntry>;
+  raw?: any;
+}
+
+function parseLatency(value: unknown): number {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string') {
+    const parsed = Number(value.replace(/[^\d.]/g, ''));
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
+}
+
+function normalizeProviders(rawProviders: any, statusData: any): ProvidersState {
+  let details: Record<string, ProviderEntry> = {};
+
+  if (rawProviders && typeof rawProviders === 'object' && !Array.isArray(rawProviders)) {
+    if (rawProviders.details && typeof rawProviders.details === 'object' && !Array.isArray(rawProviders.details)) {
+      details = rawProviders.details;
+    } else if (rawProviders.providers && typeof rawProviders.providers === 'object' && !Array.isArray(rawProviders.providers)) {
+      details = rawProviders.providers;
+    } else {
+      details = rawProviders;
+    }
+  }
+
+  if (Object.keys(details).length === 0 && statusData?.llm_providers && typeof statusData.llm_providers === 'object') {
+    details = statusData.llm_providers;
+  }
+
+  const available = Object.entries(details)
+    .filter(([, value]) => Boolean((value as ProviderEntry)?.available))
+    .map(([name]) => name);
+
+  const currentName = available[0] ?? Object.keys(details)[0] ?? null;
+  const currentEntry = currentName ? details[currentName] : null;
+  const currentLatency = parseLatency(currentEntry?.latency_ms ?? currentEntry?.stats?.avg_latency_ms);
+
+  return {
+    current: currentName ? { name: currentName, latency_ms: currentLatency } : null,
+    available,
+    details,
+    raw: rawProviders,
+  };
+}
+
 interface UseUltronOptions {
   wsUrl?: string;
   apiUrl?: string;
@@ -32,7 +91,7 @@ export function useUltron({
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<any>(null);
-  const [providers, setProviders] = useState<any>(null);
+  const [providers, setProviders] = useState<ProvidersState | null>(null);
   const [workspace, setWorkspace] = useState<any>(null);
 
   const wsRef = useRef<WebSocket | null>(null);
@@ -50,7 +109,7 @@ export function useUltron({
           fetch(`${apiUrl}/api/v2/workspace/list`).then(r => r.ok ? r.json() : null).catch(() => null),
         ]);
         if (statusRes) setStatus(statusRes);
-        if (providersRes) setProviders(providersRes);
+        setProviders(normalizeProviders(providersRes, statusRes));
         if (workspaceRes) setWorkspace(workspaceRes);
       } catch {
         // Silent fail

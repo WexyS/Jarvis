@@ -9,7 +9,7 @@ import WorkspacePanel from './components/WorkspacePanel';
 import AgentsPanel from './components/AgentsPanel';
 import TrainingPanel from './components/TrainingPanel';
 import ConversationSidebar, { Conversation } from './components/ConversationSidebar';
-import { AlertTriangle, WifiOff, PanelRightClose, PanelRightOpen, Sparkles, Sun, Moon, MessageSquare } from 'lucide-react';
+import { AlertTriangle, WifiOff, PanelRightClose, PanelRightOpen, Sun, Moon, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 type ActivePanel = 'chat' | 'workspace' | 'agents' | 'training';
@@ -139,7 +139,7 @@ function App() {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden font-sans bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+    <div className="flex h-screen overflow-hidden font-sans bg-ultron-bg text-ultron-text">
       {/* Conversation Sidebar - Fixed position, overlays everything */}
       <div className="relative z-40">
         <ConversationSidebar
@@ -168,12 +168,12 @@ function App() {
       {/* ── MAIN CONTENT ─────────────────────────── */}
       <main className="flex-1 flex flex-col min-w-0" role="main">
         {/* Header */}
-        <header className="flex items-center justify-between px-8 py-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+        <header className="flex items-center justify-between px-6 py-4 border-b border-ultron-border bg-ultron-bg-secondary/90 backdrop-blur-sm sticky top-0 z-10">
           <div className="flex items-center gap-4">
             {/* Conversation Toggle */}
             <button
               onClick={() => setConversationSidebarOpen(prev => !prev)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-200/50 dark:hover:bg-gray-800/50 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-ultron-bg-tertiary transition-colors"
               title="Toggle conversations"
             >
               <MessageSquare className="w-5 h-5" />
@@ -181,13 +181,13 @@ function App() {
             </button>
 
             {/* Panel Toggle */}
-            <div className="flex items-center gap-2 p-1 rounded-lg bg-gray-200/50 dark:bg-gray-800/50">
+            <div className="flex items-center gap-2 p-1 rounded-lg bg-ultron-bg-tertiary/80 border border-ultron-border-light">
               <button
                 onClick={() => setActivePanel('chat')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                   activePanel === 'chat'
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'bg-ultron-bg text-ultron-text shadow-sm'
+                    : 'text-ultron-text-secondary hover:text-ultron-text'
                 }`}
               >
                 💬 Chat
@@ -196,8 +196,8 @@ function App() {
                 onClick={() => setActivePanel('workspace')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                   activePanel === 'workspace'
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'bg-ultron-bg text-ultron-text shadow-sm'
+                    : 'text-ultron-text-secondary hover:text-ultron-text'
                 }`}
               >
                 🗂️ Workspace
@@ -206,8 +206,8 @@ function App() {
                 onClick={() => setActivePanel('agents')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                   activePanel === 'agents'
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'bg-ultron-bg text-ultron-text shadow-sm'
+                    : 'text-ultron-text-secondary hover:text-ultron-text'
                 }`}
               >
                 🤖 Agents
@@ -216,8 +216,8 @@ function App() {
                 onClick={() => setActivePanel('training')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                   activePanel === 'training'
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                    ? 'bg-ultron-bg text-ultron-text shadow-sm'
+                    : 'text-ultron-text-secondary hover:text-ultron-text'
                 }`}
               >
                 🎓 Training
@@ -226,17 +226,17 @@ function App() {
           </div>
 
           <div className="flex items-center gap-3">
-            <StatusBadge status={status} isConnected={isConnected} />
+            <StatusBadge status={status} providers={providers} isConnected={isConnected} />
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-gray-200/50 dark:hover:bg-gray-800/50 transition-colors"
+              className="p-2 rounded-lg hover:bg-ultron-bg-tertiary transition-colors"
               title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
             >
               {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
             </button>
             <button
               onClick={() => setInspectorOpen(!inspectorOpen)}
-              className="p-2 rounded-lg hover:bg-gray-200/50 dark:hover:bg-gray-800/50 transition-colors"
+              className="p-2 rounded-lg hover:bg-ultron-bg-tertiary transition-colors"
               title="Toggle inspector"
             >
               {inspectorOpen ? <PanelRightClose className="w-5 h-5" /> : <PanelRightOpen className="w-5 h-5" />}
@@ -251,11 +251,11 @@ function App() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="flex items-center gap-2 px-8 py-3 bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-800"
+              className="flex items-center gap-2 px-8 py-3 bg-ultron-danger/10 border-b border-ultron-danger/40"
             >
-              <WifiOff className="w-4 h-4 text-red-600" />
-              <AlertTriangle className="w-4 h-4 text-red-600" />
-              <span className="text-sm text-red-600 dark:text-red-400">{error}</span>
+              <WifiOff className="w-4 h-4 text-ultron-danger" />
+              <AlertTriangle className="w-4 h-4 text-ultron-danger" />
+              <span className="text-sm text-ultron-danger">{error}</span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -294,7 +294,7 @@ function App() {
                 animate={{ width: 320, opacity: 1 }}
                 exit={{ width: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="border-l border-gray-200 dark:border-gray-800 overflow-hidden"
+                className="border-l border-ultron-border overflow-hidden bg-ultron-panel"
               >
                 <InspectorPanel status={status} providers={providers} workspace={workspace} />
               </motion.div>

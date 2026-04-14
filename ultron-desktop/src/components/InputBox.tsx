@@ -69,8 +69,13 @@ export default function InputBox({ onSend, disabled, isConnected }: InputBoxProp
     }
   };
 
+  const resolveModeColor = (color: string) => {
+    if (color === 'var(--color-accent)') return 'rgb(var(--color-accent))';
+    return color;
+  };
+
   return (
-    <div className="border-t border-ultron-border bg-ultron-panel p-4">
+    <div className="border-t border-ultron-border bg-ultron-panel p-4 backdrop-blur-sm">
       {/* Mode selector */}
       <div className="flex items-center gap-2 mb-3">
         {MODES.map((m) => (
@@ -78,11 +83,20 @@ export default function InputBox({ onSend, disabled, isConnected }: InputBoxProp
             key={m.key}
             onClick={() => setMode(m.key)}
             disabled={!isConnected}
+            title={`${m.label} moduna geç`}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
               mode === m.key
-                ? `${m.color} text-white shadow-lg`
+                ? 'text-white shadow-lg'
                 : 'bg-ultron-bg border border-ultron-border text-ultron-textMuted hover:text-white hover:border-ultron-primary/50'
             }`}
+            style={
+              mode === m.key
+                ? {
+                    backgroundColor: resolveModeColor(m.color),
+                    boxShadow: `0 8px 20px ${resolveModeColor(m.color)}33`,
+                  }
+                : undefined
+            }
           >
             {m.icon}
             {m.label}
@@ -109,10 +123,10 @@ export default function InputBox({ onSend, disabled, isConnected }: InputBoxProp
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={
-            mode === 'chat' ? "Ask me anything..." :
-            mode === 'code' ? "Describe the code you need..." :
-            mode === 'research' ? "What should I research?" :
-            "What should I do on your computer?"
+            mode === 'chat' ? "Bana istediğini sor..." :
+            mode === 'code' ? "Yazmamı istediğin kodu tarif et..." :
+            mode === 'research' ? "Neyi araştırmamı istersin?" :
+            "Bilgisayarda hangi işlemi yapmamı istersin?"
           }
           disabled={!isConnected || disabled}
           rows={1}
@@ -121,6 +135,7 @@ export default function InputBox({ onSend, disabled, isConnected }: InputBoxProp
         <button
           type="submit"
           disabled={!input.trim() || !isConnected || disabled}
+          title="Mesajı gönder"
           className="px-6 py-3 bg-ultron-primary hover:bg-ultron-primary/80 disabled:bg-ultron-border disabled:text-ultron-textMuted/50 text-white font-medium rounded-xl transition-all disabled:cursor-not-allowed shadow-lg shadow-ultron-primary/20"
         >
           <Send className="w-5 h-5" />
@@ -130,9 +145,9 @@ export default function InputBox({ onSend, disabled, isConnected }: InputBoxProp
       {/* Status text */}
       <div className="mt-2 text-xs text-ultron-textMuted/50 text-center">
         {isConnected ? (
-          disabled ? 'Processing...' : `Press Enter to send, Shift+Enter for new line`
+          disabled ? 'İşleniyor...' : `Göndermek için Enter, yeni satır için Shift+Enter`
         ) : (
-          <span className="text-ultron-danger">Disconnected — waiting for backend...</span>
+          <span className="text-ultron-danger">Bağlantı yok — backend bekleniyor...</span>
         )}
       </div>
     </div>

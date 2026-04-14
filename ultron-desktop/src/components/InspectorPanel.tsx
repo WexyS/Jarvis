@@ -12,7 +12,7 @@ export default function InspectorPanel({ status, providers, workspace }: Inspect
   const [activeTab, setActiveTab] = useState('memory');
 
   const agents = status?.agents || {};
-  const llmProviders = providers || status?.llm_providers || {};
+  const llmProviders = providers?.details || providers || status?.llm_providers || {};
   const memory = status?.memory || {};
   const workspaceItems = workspace?.items || [];
   const isRunning = status?.running ?? false;
